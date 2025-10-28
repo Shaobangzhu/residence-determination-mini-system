@@ -1,95 +1,147 @@
-# Residency Determination System – Proof of Concept (Angular + AI)
+# Residency Determination System – Proof of Concept (React + AI)
 
-A **full-stack demo** showing how AI can assist with **tuition residency determination** by combining transparent **rules-based evaluation** with **AI-powered document understanding and explanations**.
+A **full-stack demo** using **React** and **AI-enhanced decision logic** to simulate a tuition **Residency Determination System (RDS)**.  
+The app combines transparent **rules-based evaluation** with **AI-assisted OCR** and natural-language explanations.
 
 ---
 
 ## 🎯 Project Goal
 
-To demonstrate an **AI-assisted residency determination workflow** that:
-- Evaluates student eligibility for *in-state tuition* using California residency rules.  
-- Uses OCR to extract key data from uploaded documents (lease, utility bill, driver’s license).  
-- Generates a clear, human-readable explanation of the decision and supporting evidence.  
-- Logs every action for transparency and auditability.
+To demonstrate how **AI and automation** can help assign student residency (in-state vs out-of-state tuition) by:
+- Collecting student data and document proofs (lease, utility bill, driver’s license).
+- Using **OCR (Tesseract.js)** to extract key text such as addresses and dates.  
+- Running transparent rules for **physical presence**, **intent**, and **special categories**.  
+- Generating a human-readable **explanation and confidence score**.  
+- Storing everything in an auditable, traceable backend.
 
 ---
 
-## 🧱 System Architecture
+## 🧱 Tech Stack
 
-| Layer | Technology | Key Role |
+| Layer | Technology | Purpose |
 |-------|-------------|----------|
-| Frontend | **Angular 18** | Multi-page web app (Intake → Upload → Review → Decision). |
-| Backend | **NestJS (Express)** | REST API endpoints for OCR, rule evaluation, and audit logging. |
-| AI/OCR | **Tesseract.js** | In-browser OCR to extract text, addresses, and dates from images/PDFs. |
-| Database | **SQLite + Prisma** | Stores students, extracted fields, rules fired, decisions, and audit logs. |
+| Frontend | **React 18 + TypeScript (Vite)** | Modern, fast, type-safe UI |
+| Backend | **Node.js + Express** | REST API for evaluation and audit |
+| Database | **SQLite (via Prisma)** | Lightweight, easy to deploy |
+| OCR | **Tesseract.js** | Client-side document text extraction |
+| Validation | **Zod + React Hook Form** | Type-safe schema validation |
+| API Data | **TanStack Query** | Query caching and mutation |
+| UI Library | **Material UI** (MUI) | Consistent, accessible design |
 
 ---
 
-## 🧩 Frontend Overview
+## ⚙️ Core Workflow
 
-### Pages & Components
-1. **`student-intake`** – Collects student info and intended start term.  
-2. **`doc-upload`** – Drag-and-drop zone; runs client-side OCR and extraction.  
-3. **`review-panel`** – Displays parsed evidence and rule-based evaluation.  
-4. **`decision-explanation`** – Shows AI-generated summary and confidence score.  
-5. *(Optional)* **Ask AI Side Panel** – Conversational summary of decision rationale.
+1. **Student Intake Form**  
+   Collect name, DOB, and intended start term.
 
----
+2. **Document Upload**  
+   Drag and drop documents (images/PDF). OCR extracts text, then the app detects addresses and dates.
 
-## ⚖️ Rules + AI Hybrid Decisioning
+3. **Residency Evaluation**  
+   Backend runs CA-style rules (presence ≥ 366 days, intent, CA DL).  
+   Each rule contributes to a **confidence score**.
 
-### 1. Rule Layer (Transparent)
-Implements California tuition-residency factors ([UC Office of the President](https://www.ucop.edu/residency/residency-requirements.html)):
-- **Physical presence:** ≥ 366 days before the residence determination date.  
-- **Intent:** CA address, voter registration, driver’s license, etc.  
-- **Financial independence:** Applicable to under-24 students.  
-- **Dependency & minor rules.**  
-- **Special categories:** Military, dependent minors, refugees, etc.  
+4. **AI Explanation**  
+   The backend or a local template generates a readable summary (“Met presence; two proofs; likely resident”).
 
-Each rule contributes to a **confidence score** and **reason list**.
-
-### 2. AI Layer (Assistive)
-- Extracts **dates** and **addresses** from OCR text.  
-- Generates **plain-English explanations**, e.g.  
-  > “Met 366-day presence; 2 proofs at CA address; no conflicting indicators.”  
-- Flags **missing or conflicting evidence**, e.g.  
-  > “No proof of physical presence before RDD.”
+5. **Audit Trail**  
+   Logs every input, rule fired, and final decision for traceability.
 
 ---
 
-## 📂 API Endpoints (NestJS)
+## 🗂️ Folder Structure
 
-| Endpoint | Method | Description |
-|-----------|---------|-------------|
-| `/api/ocr` | `POST` | Runs Tesseract OCR and returns extracted text. |
-| `/api/ingest` | `POST` | Saves student data and extracted fields. |
-| `/api/decision` | `POST` | Applies rule logic + AI explanation; returns decision object. |
-| `/api/audit` | `GET` | Retrieves audit logs for review. |
+```
+rds-poc/
+  frontend/
+    src/
+      app.tsx
+      routes/
+        IntakePage.tsx
+        UploadPage.tsx
+        ReviewPage.tsx
+      components/
+        IntakeForm.tsx
+        DocUploader.tsx
+        OcrPreview.tsx
+        RuleResults.tsx
+        DecisionCard.tsx
+        ExplainPanel.tsx
+      lib/
+        api.ts
+        ocr.ts
+        parsing.ts
+        types.ts
+
+  backend/
+    src/
+      index.ts
+      routes/
+        students.ts
+        evidence.ts
+        decision.ts
+        audit.ts
+      services/
+        rules.ts
+        explanation.ts
+        db.ts
+    prisma/
+      schema.prisma
+```
 
 ---
 
-## 🗄️ Data Model (Prisma)
+## ⚖️ Decision Logic (Rule Engine)
+
+### Implemented Rules
+| Rule | Description | Weight |
+|------|--------------|--------|
+| Physical Presence | ≥ 366 days before Residence Determination Date | 0.5 |
+| Intent | ≥ 2 independent proofs (lease, utility bill, bank) | 0.35 |
+| CA Driver License | Holds a valid CA DL | 0.15 |
+| Special Category | Military, refugee, etc. | overrides |
+
+Each rule contributes to a **weighted confidence score**.  
+A simple classification applies:
+- ≥ 0.7 → **Resident**
+- 0.5–0.69 → **Needs More Info**
+- < 0.5 → **Nonresident**
+
+---
+
+## 🧠 AI Layer (Optional)
+
+- **LLM integration (OpenAI or Gemini)** for enhanced natural-language explanations.  
+- Fallback: a deterministic template-based generator.  
+
+Example output:
+> "Result: RESIDENT (confidence 0.82). Positive signals: presence, address, CA DL. Missing: none."
+
+---
+
+## 🗄️ Database Schema (Prisma)
 
 ```prisma
 model Student {
-  id           Int      @id @default(autoincrement())
-  name         String
-  dob          DateTime
-  startTerm    String
-  evidences    Evidence[]
-  decisions    Decision[]
-  auditLogs    AuditLog[]
+  id        Int      @id @default(autoincrement())
+  name      String
+  dob       DateTime
+  startTerm String
+  evidences Evidence[]
+  decisions Decision[]
+  audits    AuditLog[]
 }
 
 model Evidence {
-  id              Int      @id @default(autoincrement())
-  studentId       Int
-  type            String
-  fileUrl         String
-  ocrText         String?
+  id               Int      @id @default(autoincrement())
+  studentId        Int
+  type             String
+  fileUrl          String
+  ocrText          String?
   extractedAddress String?
-  extractedDates  String?
-  Student         Student  @relation(fields: [studentId], references: [id])
+  extractedDates   String?
+  Student          Student  @relation(fields: [studentId], references: [id])
 }
 
 model Decision {
@@ -115,54 +167,61 @@ model AuditLog {
 
 ---
 
-## ⚙️ Setup Instructions
+## 🧩 Key React Components
 
-```bash
-# 1. Clone
-git clone https://github.com/<yourusername>/residency-determination-poc.git
-cd residency-determination-poc
-
-# 2. Install dependencies
-npm install
-
-# 3. Run backend (NestJS)
-cd apps/api
-npm run start:dev
-
-# 4. Run frontend (Angular)
-cd ../web
-npm start
-```
+| Component | Function |
+|------------|-----------|
+| `IntakeForm` | Collects student info |
+| `DocUploader` | Drag & drop file input + OCR trigger |
+| `OcrPreview` | Shows raw OCR text and extracted fields |
+| `RuleResults` | Table of rule outcomes |
+| `DecisionCard` | Displays status, confidence, and AI summary |
+| `ExplainPanel` | Textual explanation + audit log link |
 
 ---
 
-## 💡 Demo Workflow
+## 🚀 Quick Start
 
-1. Fill out student intake form.  
-2. Upload residency proof documents (e.g., lease, utility bill).  
-3. View OCR-extracted data and rule evaluation results.  
-4. Click **Evaluate** to generate decision, reasons, and AI explanation.  
-5. Inspect audit trail and downloadable JSON log.
+```bash
+# 1. Clone
+git clone https://github.com/<yourusername>/residency-determination-react.git
+cd residency-determination-react
+
+# 2. Frontend setup
+cd frontend
+npm install
+npm run dev
+
+# 3. Backend setup
+cd ../backend
+npm install
+npx prisma migrate dev --name init
+npm run dev
+```
+
+Visit **http://localhost:5173** for the frontend and **http://localhost:3000** for the API.
 
 ---
 
 ## 🔐 Governance & Ethics
 
-- **Transparency:** Display which rules fired and why.  
-- **Traceability:** Maintain a full audit log of inputs and outcomes.  
-- **Fairness:** Exclude sensitive or protected attributes from decision logic.  
-- **Explainability:** Provide a clear English summary for every automated decision.
+- **Transparency** – show all rules fired and why.  
+- **Traceability** – maintain audit logs of decisions.  
+- **Fairness** – exclude sensitive demographic attributes.  
+- **Explainability** – every automated decision has a human-readable reason.
 
 ---
 
 ## 📚 Helpful References
 
-- [UC Residency Requirements](https://www.ucop.edu/residency/residency-requirements.html)  
-- [Tesseract.js Documentation](https://tesseract.projectnaptha.com/)  
-- [Angular AI Integration Guide](https://angular.dev/guide/ai)  
-- [NestJS + Prisma Tutorial](https://docs.nestjs.com/recipes/prisma)
+- [Tesseract.js Docs](https://tesseract.projectnaptha.com/)  
+- [Prisma ORM](https://www.prisma.io/docs)  
+- [React Hook Form + Zod](https://react-hook-form.com/get-started)  
+- [Material UI Components](https://mui.com/)  
+- [California Residency Requirements](https://www.ucop.edu/residency/residency-requirements.html)
 
 ---
 
-## 🧑‍💻 Author
-**Chaoran Lu** – Software Engineer | Full-stack AI & MERN/MEAN Developer
+## 👨‍💻 Author
+**Chaoran Lu**  
+Software Engineer | Full-stack React + Express Developer
