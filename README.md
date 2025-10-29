@@ -20,7 +20,7 @@ To demonstrate how **AI and automation** can help assign student residency (in-s
 
 | Layer | Technology | Purpose |
 |-------|-------------|----------|
-| Frontend | **React 18 + TypeScript (Vite)** | Modern, fast, type-safe UI |
+| Frontend | **React 18 + TypeScript** | Modern, fast, type-safe UI |
 | Backend | **Node.js + Express** | REST API for evaluation and audit |
 | Database | **SQLite (via Prisma)** | Lightweight, easy to deploy |
 | OCR | **Tesseract.js** | Client-side document text extraction |
