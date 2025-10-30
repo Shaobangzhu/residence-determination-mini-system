@@ -80,12 +80,12 @@
   <body>
     <div class="js-container"></div>
 
-    <script src="https://unpkg.com/supersimpledev/react.js"></script>
-    <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
+    <script src="./cludev/react.js"></script>
+    <script src="./cludev/react-dom.js"></script>
 
-    <script src="https://unpkg.com/supersimpledev@8.0.1/chatbot.js"></script>
+    <script src="./utils/chatbot.js"></script>
 
-    <script src="https://unpkg.com/supersimpledev/babel.js"></script>
+    <script src="./cludev/babel.js"></script>
 
     <script type="text/babel">
       function ChatInput({ chatMessages, setChatMessages }) {
@@ -181,28 +181,7 @@
       }
 
       function App() {
-        const [chatMessages, setChatMessages] = React.useState([
-          {
-            message: "hello chatbot",
-            sender: "user",
-            id: "id1",
-          },
-          {
-            message: "hello, how can I help you?",
-            sender: "robot",
-            id: "id2",
-          },
-          {
-            message: "can you get me todays date?",
-            sender: "user",
-            id: "id3",
-          },
-          {
-            message: "today is october 29th",
-            sender: "robot",
-            id: "id4",
-          },
-        ]);
+        const [chatMessages, setChatMessages] = React.useState([]);
 
         return (
           <div className="app-container">
