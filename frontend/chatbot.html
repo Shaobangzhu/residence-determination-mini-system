@@ -2,6 +2,66 @@
 <html>
   <head>
     <title>Chatbot</title>
+    <style>
+      body {
+        font-family: Arial;
+      }
+
+      .send-btn {
+        background-color: rgb(25, 135, 84);
+        color: white;
+        padding: 12px 20px;
+        margin-left: 10px;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        cursor: pointer;
+      }
+
+      .chat-input {
+        padding: 12px 15px;
+        border-radius: 10px;
+        border-width: 1px;
+        font-size: 15px;
+
+        flex-grow: 1;
+      }
+
+      .chat-input-container {
+        display: flex;
+      }
+
+      .app-container {
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .chat-message-user {
+        display: flex;
+        justify-content: end;
+        align-items: start;
+      }
+
+      .chat-message-robot {
+        display: flex;
+        align-items: start;
+      }
+
+      .chat-message-text {
+        background-color: rgb(238, 238, 238);
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-right: 10px;
+        margin-left: 10px;
+        margin-bottom: 20px;
+        max-width: 300px;
+      }
+
+      .chat-message-profile {
+        width: 45px;
+      }
+    </style>
   </head>
   <body>
     <div class="js-container"></div>
@@ -12,6 +72,7 @@
     <script src="https://unpkg.com/supersimpledev@8.0.1/chatbot.js"></script>
 
     <script src="https://unpkg.com/supersimpledev/babel.js"></script>
+
     <script type="text/babel">
       function ChatInput({ chatMessages, setChatMessages }) {
         const [inputText, setInputText] = React.useState('');
@@ -47,27 +108,34 @@
         }
 
         return (
-          <>
+          <div className="chat-input-container">
             <input 
               placeholder="Sand a message to Chatbot" 
               size="30"
               onChange={saveInputText}
-              value={inputText} 
+              value={inputText}
+              className="chat-input" 
             />
-            <button onClick={sendMessage}>Send</button>
-          </>
+            <button onClick={sendMessage} className="send-btn">Send</button>
+          </div>
         );
       }
 
       function ChatMessage({ message, sender }) {
         return (
-          <div>
+          <div className={
+            sender === 'user' 
+              ? 'chat-message-user' 
+              : 'chat-message-robot'
+          }>
             {sender === "robot" && (
-              <img src="../docs/resources/images/robot.png" width="50" />
+              <img src="../docs/resources/images/robot.png" className="chat-message-profile" />
             )}
-            {message}
+            <div className="chat-message-text">
+              {message}
+            </div>
             {sender === "user" && (
-              <img src="../docs/resources/images/user.png" width="50" />
+              <img src="../docs/resources/images/user.png" className="chat-message-profile" />
             )}
           </div>
         );
@@ -115,7 +183,7 @@
         ]);
 
         return (
-          <>
+          <div className="app-container">
             <ChatInput
               chatMessages={chatMessages}
               setChatMessages={setChatMessages} 
@@ -124,7 +192,7 @@
               chatMessages={chatMessages}
               setChatMessages={setChatMessages} 
             />
-          </>
+          </div>
         );
       }
       const container = document.querySelector(".js-container");
