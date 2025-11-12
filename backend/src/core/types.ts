@@ -16,6 +16,6 @@ export const StudentInputSchema = z.object({
 export type StudentInput = z.infer<typeof StudentInputSchema>;
 
 export type Decision =
-  | { status: 'resident'; reasons: string[] }
-  | { status: 'nonresident'; reasons: string[] }
-  | { status: 'needs_review'; reasons: string[] };
+  { status: 'resident'; reasons: string[] } |
+  { status: 'nonresident'; reasons: string[] } |
+  { status: 'needs_review'; reasons: string[] };
