@@ -2,6 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import decisionRouter from './routes/decision.route';
 
+/**
+ * Main application entry point for the Express Server
+ */
+
 const app = express();
 
 app.use(cors());
