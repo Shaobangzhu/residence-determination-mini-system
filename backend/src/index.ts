@@ -1,0 +1,24 @@
+import express from 'express';
+import cors from 'cors';
+import decisionRouter from './routes/decision.route';
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// health check
+app.get('/health', (_req, res) => {
+    res.json({ ok: true, timestamp: Date.now() });
+});
+
+app.use('/api', decisionRouter);
+
+const PORT = process.env.PORT || 3000;
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server listening on http://localhost:${PORT}`);
+    });
+}
+
+export default app;
