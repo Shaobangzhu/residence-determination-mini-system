@@ -1,6 +1,9 @@
 name: Backend Tests
 
 on:
+  # 0) Allow manual triggering of the workflow
+  workflow_dispatch:
+
   # 1) Any pull request that changes backend files
   pull_request:
     paths:
