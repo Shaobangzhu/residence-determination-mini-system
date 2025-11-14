@@ -43,8 +43,8 @@ jobs:
 
       # Step 4: Run unit tests
       - name: Run unit test suite
-        run: npm test:unit
+        run: npm run test:unit
 
       # Step 5: Run API tests
       - name: Run API test suite
-        run: npm test:api
+        run: npm run test:api
