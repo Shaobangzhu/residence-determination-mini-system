@@ -1,0 +1,47 @@
+name: Backend Tests
+
+on:
+  # 1) Any pull request that changes backend files
+  pull_request:
+    paths:
+      - "backend/**"
+  # 2) Optional: also run on direct pushes to main
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+
+    # All `run` commands will execute inside the backend folder
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      # Step 1: Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Step 4: Run unit tests
+      - name: Run unit test suite
+        run: npm test:unit
+
+      # Step 5: Run API tests
+      - name: Run API test suite
+        run: npm test:api
