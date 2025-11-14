@@ -258,6 +258,9 @@ const App: React.FC = () => {
         pushBotText(errorMsg);
       } else {
         const data: ApiResponse = await res.json();
+
+        // ⭐ ADD NATURAL DELAY HERE (one second)
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         const confidence = computeConfidence(data.decision);
         const keyFactors = buildKeyFactors(form, data.decision);
         pushDecisionCard(data, confidence, keyFactors);
