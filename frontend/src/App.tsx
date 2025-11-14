@@ -50,30 +50,50 @@ const initialForm: StudentInputPayload = {
   financiallyIndependent: false
 };
 
-// 这里我们假设前端通过 Vite 代理到 http://localhost:3000
-// 所以只用相对路径 /api/decide 即可
+// 对话状态机的各个阶段
+type ConversationStep =
+  | 'welcome'
+  | 'askAge'
+  | 'askMonths'
+  | 'askCADriver'
+  | 'askVote'
+  | 'askTax'
+  | 'askIndependent'
+  | 'evaluating'
+  | 'done';
+
+// 后端端点（通过 Vite 代理到 http://localhost:3000）
 const DECIDE_ENDPOINT = '/api/decide?explain=true';
 
 const App: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [form, setForm] = useState<StudentInputPayload>(initialForm);
+  const [step, setStep] = useState<ConversationStep>('welcome');
   const [loading, setLoading] = useState(false);
   const chatRef = useRef<HTMLDivElement | null>(null);
 
-  // 首次加载时，放入一条欢迎消息
+  // 初始欢迎 + 第一问
   useEffect(() => {
-    setMessages([
+    const firstBotMessages: Message[] = [
       {
         id: crypto.randomUUID(),
         sender: 'bot',
         kind: 'text',
-        text: "Hello! I'm the RDS Assistant. To begin, please provide your age, months in California, and residency ties (driver's license, voter registration, tax filing)."
+        text: "Hello! I'm the RDS Assistant for UC Riverside. I’ll ask a few questions to estimate residency for tuition purposes."
+      },
+      {
+        id: crypto.randomUUID(),
+        sender: 'bot',
+        kind: 'text',
+        text: 'First, how old will you be when the term starts? (Just type a number, e.g., 19.)'
       }
-    ]);
+    ];
+    setMessages(firstBotMessages);
+    setStep('askAge');
   }, []);
 
-  // 每次消息变更自动滚动到底部
+  // 自动滚动到底部
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTo({
@@ -122,11 +142,21 @@ const App: React.FC = () => {
     ]);
   };
 
-  const setKV = <K extends keyof StudentInputPayload>(key: K, value: StudentInputPayload[K]) => {
+  const setKV = <K extends keyof StudentInputPayload>(
+    key: K,
+    value: StudentInputPayload[K]
+  ) => {
     setForm((prev) => ({
       ...prev,
       [key]: value
     }));
+  };
+
+  const parseYesNo = (text: string): boolean | null => {
+    const trimmed = text.trim().toLowerCase();
+    if (['yes', 'y', 'true'].includes(trimmed)) return true;
+    if (['no', 'n', 'false'].includes(trimmed)) return false;
+    return null;
   };
 
   const computeConfidence = (decision: ApiDecision): number => {
@@ -141,7 +171,10 @@ const App: React.FC = () => {
     }
   };
 
-  const buildKeyFactors = (payload: StudentInputPayload, decision: ApiDecision): string[] => {
+  const buildKeyFactors = (
+    payload: StudentInputPayload,
+    decision: ApiDecision
+  ): string[] => {
     const factors: string[] = [];
 
     if (payload.monthsInCA >= 12) {
@@ -170,93 +203,182 @@ const App: React.FC = () => {
     return factors;
   };
 
+  const askNextQuestion = (next: ConversationStep) => {
+    setStep(next);
+
+    switch (next) {
+      case 'askMonths':
+        pushBotText(
+          'Great, thanks. How many months have you physically lived in California before the start of the term? (e.g., 14)'
+        );
+        break;
+      case 'askCADriver':
+        pushBotText('Do you have a valid California driver’s license or state ID? (yes / no)');
+        break;
+      case 'askVote':
+        pushBotText('Are you registered to vote in California? (yes / no)');
+        break;
+      case 'askTax':
+        pushBotText('Do you file California state income taxes as a resident? (yes / no)');
+        break;
+      case 'askIndependent':
+        pushBotText('Are you financially independent from your parents/guardians? (yes / no)');
+        break;
+      case 'evaluating':
+        // 不问问题，这个状态用于调用后端
+        break;
+      case 'done':
+        pushBotText(
+          'If you want to run another scenario, type "restart".'
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
+  const callBackendAndShowDecision = async () => {
+    setStep('evaluating');
+    setLoading(true);
+    pushBotText('Got it. Let me evaluate your residency based on these answers...');
+
+    try {
+      const res = await fetch(DECIDE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(form)
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        const errorMsg =
+          (data as { error?: string }).error || `Request failed with status ${res.status}`;
+        pushBotText(errorMsg);
+      } else {
+        const data: ApiResponse = await res.json();
+        const confidence = computeConfidence(data.decision);
+        const keyFactors = buildKeyFactors(form, data.decision);
+        pushDecisionCard(data, confidence, keyFactors);
+      }
+    } catch (err: unknown) {
+      console.error(err);
+      pushBotText('Server error. Please make sure the backend is running.');
+    } finally {
+      setLoading(false);
+      setStep('done');
+      askNextQuestion('done');
+    }
+  };
+
+  const resetConversation = () => {
+    setForm(initialForm);
+    setMessages([
+      {
+        id: crypto.randomUUID(),
+        sender: 'bot',
+        kind: 'text',
+        text: "Let's start a new scenario. I’ll ask a few questions to estimate residency."
+      },
+      {
+        id: crypto.randomUUID(),
+        sender: 'bot',
+        kind: 'text',
+        text: 'First, how old will you be when the term starts? (Just type a number, e.g., 19.)'
+      }
+    ]);
+    setStep('askAge');
+    setInput('');
+  };
+
+  const processAnswerForStep = async (currentStep: ConversationStep, text: string) => {
+    // 全局命令：restart
+    if (text.trim().toLowerCase() === 'restart') {
+      resetConversation();
+      return;
+    }
+
+    switch (currentStep) {
+      case 'askAge': {
+        const age = Number(text.trim());
+        if (!Number.isFinite(age) || age <= 0) {
+          pushBotText('Please enter a valid age as a number (e.g., 18).');
+          return;
+        }
+        setKV('age', age);
+        askNextQuestion('askMonths');
+        return;
+      }
+      case 'askMonths': {
+        const months = Number(text.trim());
+        if (!Number.isFinite(months) || months < 0) {
+          pushBotText('Please enter a non-negative number of months (e.g., 14).');
+          return;
+        }
+        setKV('monthsInCA', months);
+        askNextQuestion('askCADriver');
+        return;
+      }
+      case 'askCADriver': {
+        const yesNo = parseYesNo(text);
+        if (yesNo === null) {
+          pushBotText('Please answer with yes or no (e.g., "yes").');
+          return;
+        }
+        setKV('hasCADriverLicense', yesNo);
+        askNextQuestion('askVote');
+        return;
+      }
+      case 'askVote': {
+        const yesNo = parseYesNo(text);
+        if (yesNo === null) {
+          pushBotText('Please answer with yes or no.');
+          return;
+        }
+        setKV('registeredToVoteInCA', yesNo);
+        askNextQuestion('askTax');
+        return;
+      }
+      case 'askTax': {
+        const yesNo = parseYesNo(text);
+        if (yesNo === null) {
+          pushBotText('Please answer with yes or no.');
+          return;
+        }
+        setKV('filesCATaxes', yesNo);
+        askNextQuestion('askIndependent');
+        return;
+      }
+      case 'askIndependent': {
+        const yesNo = parseYesNo(text);
+        if (yesNo === null) {
+          pushBotText('Please answer with yes or no.');
+          return;
+        }
+        setKV('financiallyIndependent', yesNo);
+        await callBackendAndShowDecision();
+        return;
+      }
+      case 'done': {
+        // 在 done 状态下如果不是 restart，就简单提示一下
+        pushBotText('Type "restart" if you would like to try another scenario.');
+        return;
+      }
+      default:
+        return;
+    }
+  };
+
   const handleSend = async () => {
     const trimmed = input.trim();
-    if (!trimmed) return;
+    if (!trimmed || loading) return;
 
-    // 先把用户输入 push 到对话里
+    // 先推入用户消息
     pushUserText(trimmed);
-
-    // 命令解析：age, months, caid, vote, tax, independent
-    const lower = trimmed.toLowerCase();
-
-    if (lower.startsWith('age:')) {
-      const value = Number(trimmed.split(':')[1]?.trim() || 0);
-      setKV('age', Number.isNaN(value) ? 0 : value);
-      pushBotText(`Got it. Age set to ${value}.`);
-    }
-
-    if (lower.startsWith('months:')) {
-      const value = Number(trimmed.split(':')[1]?.trim() || 0);
-      setKV('monthsInCA', Number.isNaN(value) ? 0 : value);
-      pushBotText(`Okay, months in California set to ${value}.`);
-    }
-
-    if (lower.startsWith('caid:')) {
-      const yes = /yes|true/i.test(trimmed);
-      setKV('hasCADriverLicense', yes);
-      pushBotText(`CA Driver License: ${yes ? 'yes' : 'no'}.`);
-    }
-
-    if (lower.startsWith('vote:')) {
-      const yes = /yes|true/i.test(trimmed);
-      setKV('registeredToVoteInCA', yes);
-      pushBotText(`Registered to vote in CA: ${yes ? 'yes' : 'no'}.`);
-    }
-
-    if (lower.startsWith('tax:')) {
-      const yes = /yes|true/i.test(trimmed);
-      setKV('filesCATaxes', yes);
-      pushBotText(`Files CA taxes: ${yes ? 'yes' : 'no'}.`);
-    }
-
-    if (lower.startsWith('independent:')) {
-      const yes = /yes|true/i.test(trimmed);
-      setKV('financiallyIndependent', yes);
-      pushBotText(`Financially independent: ${yes ? 'yes' : 'no'}.`);
-    }
-
-    // 提示用户可以提交
-    if (!/^submit$/i.test(trimmed)) {
-      pushBotText(
-        "You can continue updating info (e.g., `age: 22`, `months: 14`, `caid: yes`, `vote: yes`, `tax: yes`, `independent: yes`) or type `submit` for a decision."
-      );
-    }
-
-    // 提交：调用后端 /api/decide?explain=true
-    if (/^submit$/i.test(trimmed)) {
-      setLoading(true);
-      try {
-        const res = await fetch(DECIDE_ENDPOINT, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(form)
-        });
-
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({}));
-          const errorMsg =
-            (data as { error?: string }).error || `Request failed with status ${res.status}`;
-          pushBotText(errorMsg);
-        } else {
-          const data: ApiResponse = await res.json();
-
-          const confidence = computeConfidence(data.decision);
-          const keyFactors = buildKeyFactors(form, data.decision);
-
-          pushDecisionCard(data, confidence, keyFactors);
-        }
-      } catch (err: unknown) {
-        console.error(err);
-        pushBotText('Server error. Please make sure the backend is running.');
-      } finally {
-        setLoading(false);
-      }
-    }
-
+    const currentStep = step;
     setInput('');
+    await processAnswerForStep(currentStep, trimmed);
   };
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
@@ -278,7 +400,7 @@ const App: React.FC = () => {
           <div className="chat-ucr-logo">UCR</div>
         </header>
 
-        {/* Chat body */}
+        {/* Body */}
         <div className="chat-body">
           <div className="chat-window" ref={chatRef}>
             {messages.map((m) => {
@@ -342,34 +464,6 @@ const App: React.FC = () => {
                 </div>
               );
             })}
-
-            {/* Hints card */}
-            <div className="chat-row chat-row-bot">
-              <div className="avatar">
-                <div className="avatar-circle" />
-              </div>
-              <div className="hint-card">
-                <strong>Hints</strong>
-                <ul>
-                  <li>
-                    Set age:{' '}
-                    <code>age: 22</code>
-                  </li>
-                  <li>
-                    Set months in CA:{' '}
-                    <code>months: 14</code>
-                  </li>
-                  <li>
-                    Residency ties:{' '}
-                    <code>caid: yes</code>, <code>vote: yes</code>, <code>tax: yes</code>,{' '}
-                    <code>independent: yes</code>
-                  </li>
-                  <li>
-                    When ready, type <code>submit</code> to get a decision.
-                  </li>
-                </ul>
-              </div>
-            </div>
           </div>
 
           {/* Input bar */}
@@ -379,7 +473,9 @@ const App: React.FC = () => {
               placeholder={
                 loading
                   ? 'Evaluating…'
-                  : 'Type here… e.g., age: 22, months: 14, caid: yes, vote: yes, tax: yes'
+                  : step === 'done'
+                  ? 'Type "restart" to try another scenario'
+                  : 'Type your answer here…'
               }
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -389,14 +485,14 @@ const App: React.FC = () => {
             <button
               className="chat-send-btn"
               onClick={() => void handleSend()}
-              disabled={loading}
+              disabled={loading || !input.trim()}
             >
               {loading ? '...' : 'Send'}
             </button>
           </div>
         </div>
 
-        {/* Footer note */}
+        {/* Footer */}
         <footer className="chat-footer">
           Demo only · Not official UCR residency guidance
         </footer>
