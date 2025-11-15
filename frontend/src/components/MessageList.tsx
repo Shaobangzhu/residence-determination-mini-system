@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import type { Message } from '../types/message-types';
 import { DecisionCard } from './DecisionCard';
+// @ts-expect-error: PNG module declarations are not present in this project
 import botIcon from '../assets/icons/robot.png';
+// @ts-expect-error: PNG module declarations are not present in this project
 import userIcon from '../assets/icons/user.png';
 
 type Props = {
@@ -13,7 +15,7 @@ export const MessageList: React.FC<Props> = ({ messages }) => {
 
   // auto scroll
   useEffect(() => {
-    if (chatRef.current) {
+    if (chatRef.current && typeof chatRef.current.scrollTo === 'function') {
       chatRef.current.scrollTo({
         top: chatRef.current.scrollHeight,
         behavior: 'smooth'
