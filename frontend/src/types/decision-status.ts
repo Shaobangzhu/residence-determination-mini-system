@@ -1,0 +1,1 @@
+export type DecisionStatus = 'resident' | 'nonresident' | 'needs_review';
