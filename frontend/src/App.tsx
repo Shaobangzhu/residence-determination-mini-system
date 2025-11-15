@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import botIcon from './assets/icons/robot.png';
+import userIcon from './assets/icons/user.png';
 
 type DecisionStatus = 'resident' | 'nonresident' | 'needs_review';
 
@@ -415,9 +417,16 @@ const App: React.FC = () => {
                   >
                     {m.sender === 'bot' && (
                       <div className="avatar">
-                        <div className="avatar-circle" />
+                        <img src={botIcon} className='avatar-img' alt='RDS Bot' />
                       </div>
                     )}
+
+                    {m.sender === 'user' && (
+                      <div className='avatar user-avatar'>
+                        <img src={userIcon} className='avatar-img' alt="User" />
+                      </div>
+                    )}
+
                     <div
                       className={`bubble ${
                         m.sender === 'user' ? 'bubble-user' : 'bubble-bot'
@@ -433,7 +442,7 @@ const App: React.FC = () => {
               return (
                 <div key={m.id} className="chat-row chat-row-bot">
                   <div className="avatar">
-                    <div className="avatar-circle" />
+                    <img src={botIcon} className="avatar-img" alt="Bot" />
                   </div>
                   <div className="decision-card">
                     <p>
