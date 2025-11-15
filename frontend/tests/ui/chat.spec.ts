@@ -34,7 +34,7 @@ test('user can complete a residency flow', async ({ page }) => {
 
   // 等待结果卡片出现
   await expect(
-    page.getByText(/Decision:/i)
+    page.getByText('Decision:', { exact: true })
   ).toBeVisible();
 
   await expect(
