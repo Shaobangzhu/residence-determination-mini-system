@@ -1,10 +1,6 @@
 # Residency Determination Mini System (RDS Assistant)
 
-An interactive **Residency Determination chatbot** for UC Riverside,
-built with a modern **full-stack TypeScript** architecture.\
-This project demonstrates a realistic academic workflow for evaluating
-residency status using automated logic, clean UI design, and
-production-style engineering patterns.
+An interactive **Residency Determination chatbot** for UC Riverside, built with a modern **full-stack TypeScript** architecture. This project demonstrates a realistic workflow for evaluating residency status using automated logic, clean UI design, and production-style engineering patterns.
 
 Designed as a portfolio-quality project with:
 
