@@ -46,6 +46,9 @@ Chatbot Interaction
 ## 📁 Directory Structure
 ```
 .
+├── .github/workflows
+│ └── ci.yml # Whenever there were pull request from backend or frontend or push to main branch, trigger the tests
+| 
 ├── backend/
 │ ├── src/
 │ │ ├── core/ # Decision logic, explanation engine
