@@ -17,6 +17,10 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: './src/test/setupTests.ts'
+    setupFiles: './src/test/setupTests.ts',
+    // 只跑 unit 目录下的 *.test.ts / *.test.tsx
+    include: ['tests/unit/**/*.spec.ts?(x)'],
+    // 明确排除掉 Playwright 的 ui 测试
+    exclude: ['tests/ui/**', 'node_modules/**', 'dist/**'],
   }
 })
