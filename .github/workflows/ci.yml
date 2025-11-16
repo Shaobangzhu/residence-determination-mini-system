@@ -103,7 +103,12 @@ jobs:
         working-directory: backend
         run: |
           npm run dev &
-          npx wait-on http://127.0.0.1:3000
+          sleep 5
+          echo "=== curl / ==="
+          curl -i http://127.0.0.1:3000/ || true
+          echo "=== curl /api/health ==="
+          curl -i http://127.0.0.1:3000/api/health || true
+          npx wait-on tcp:3000
         timeout-minutes: 2
 
       # Install frontend deps
