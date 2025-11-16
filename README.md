@@ -12,7 +12,7 @@ Designed as a portfolio-quality project with:
 
 ## 🌟 Demo Preview
 
-[Chatbot Interaction Live Demo](https://residence-determination-mini-sy-git-c10d0f-chaoran-lus-projects.vercel.app/)
+[Chatbot Interaction **Live Demo**](https://residence-determination-mini-sy-git-c10d0f-chaoran-lus-projects.vercel.app/)
 
 ---
 
