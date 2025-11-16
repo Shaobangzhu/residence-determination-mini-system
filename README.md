@@ -158,7 +158,7 @@ npm install && npm run build
 npm start
 ```
 
-## 🧪 Testing
+## 🧪 Testing Locally
 
 ### Backend Unit Tests
 
