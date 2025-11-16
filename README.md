@@ -79,12 +79,7 @@ This ensures the frontend always targets the correct backend via `VITE_API_BASE_
 
 ---
 
-#### 🔗 Deployment Flow Summary
-
-GitHub Push/PR → CI Tests → (main only) → Deploy Backend → Deploy Frontend
-
-
-This automated pipeline guarantees:
+#### 🔗 This automated pipeline guarantees:
 
 - Verified code before deployment  
 - Zero manual steps  
@@ -95,7 +90,7 @@ This automated pipeline guarantees:
 ```
 .
 ├── .github/workflows
-│ └── ci.yml # Whenever there were pull request from backend or frontend or push to main branch, trigger the tests
+│ └── cicd.yml # GitHub Push/PR → CI Tests → (main only) → Deploy Backend → Deploy Frontend
 | 
 ├── backend/
 │ ├── src/
@@ -111,9 +106,6 @@ This automated pipeline guarantees:
 │ │ ├── constants/ # Shared constants
 │ │ └── App.tsx
 │ └── tests/ # Vitest unit tests & # Playwright UI tests
-│
-├── .github/workflows/
-│ └── ci.yml # Consolidated CI pipeline
 │
 └── README.md
 ```
