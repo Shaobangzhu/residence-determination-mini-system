@@ -104,6 +104,7 @@ jobs:
         run: |
           npm run dev &
           npx wait-on http://127.0.0.1:3000
+        timeout-minutes: 2
 
       # Install frontend deps
       - name: Install frontend dependencies
