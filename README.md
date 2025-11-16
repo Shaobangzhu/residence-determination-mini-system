@@ -16,7 +16,7 @@ Designed as a portfolio-quality project with:
 
 ## 🌟 Demo Preview
 
-Chatbot Interaction
+[Chatbot Interaction Live Demo](https://residence-determination-mini-sy-git-c10d0f-chaoran-lus-projects.vercel.app/)
 
 ---
 
@@ -69,15 +69,45 @@ Chatbot Interaction
 │
 └── README.md
 ```
+## 🚀 Deployment Architecture
 
-## 🧠 Core Features
+This project follows a simple and reliable **frontend–backend separation** model optimized for modern web applications and interview-ready demos.
 
-- Automated residency decision engine\
-- Explainable decisions\
-- ChatGPT-style guided user flow\
-- Frontend state machine\
-- Full-stack test coverage\
-- CI automation
+---
+
+### Frontend (React + Vite) — Vercel
+
+The user interface is built as a React SPA using Vite and deployed on **Vercel**.
+
+**Why Vercel for the frontend?**
+
+- Zero-config builds for React/Vite
+- Global CDN for fast static asset delivery
+- Automatic deployments from GitHub on every push (Preview Deployments)
+- Environment variables support (e.g., `VITE_API_BASE_URL`) for targeting different backends
+
+The frontend communicates with the backend exclusively via a JSON REST API.
+
+---
+
+### Backend (Node.js + Express) — Render
+
+The residency decision engine is implemented as a standalone **Express** server and deployed as a **Render Web Service**.
+
+**Why Render for the backend?**
+
+- Designed for **long-running Node processes**
+- Familiar server-style model (routing, middleware, logging)
+- Health check endpoints:
+  - `GET /health` – basic JSON health check
+  - `GET /api/health` – API subsystem health check
+- Clear separation between API logic and frontend build artifacts
+
+Render builds and starts the backend from the `backend/` directory with:
+
+```bash
+npm install && npm run build
+npm start
 
 ## 🧪 Testing
 
