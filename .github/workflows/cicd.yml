@@ -1,16 +1,16 @@
-name: CI
+name: CI/CD
 
 on:
-  # 0) 手动触发
+  # 0) Manual trigger
   workflow_dispatch:
 
-  # 1) 任意修改 backend 或 frontend 的 PR
+  # 1) Any PR that modifies backend or frontend
   pull_request:
     paths:
       - "backend/**"
       - "frontend/**"
 
-  # 2) push 到 main 分支且改动 backend 或 frontend
+  # 2) Push to main that modifies backend or frontend (CD will trigger)
   push:
     branches:
       - main
@@ -20,7 +20,7 @@ on:
 
 jobs:
   # ------------------------
-  # Backend unit/API tests
+  # Backend unit + API tests
   # ------------------------
   backend-tests:
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
         run: npm run test:unit:run
 
   # ------------------------
-  # Frontend UI (Playwright) tests
+  # Frontend UI tests (Playwright)
   # ------------------------
   frontend-ui-tests:
     runs-on: ubuntu-latest
@@ -98,7 +98,7 @@ jobs:
         working-directory: backend
         run: npm ci
 
-      # 启动 backend (3000) 在后台，并等待就绪
+      # Start backend (port 3000) in background and wait for readiness
       - name: Start backend server
         working-directory: backend
         run: |
@@ -116,12 +116,76 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      # 安装 Playwright 浏览器
+      # Install required Playwright browsers
       - name: Install Playwright browsers
         working-directory: frontend
         run: npx playwright install --with-deps
 
-      # 跑 UI 测试（会按 playwright.config.ts 自动起 Vite）
+      # Run Playwright UI tests (Playwright starts Vite dev server automatically)
       - name: Run Playwright UI tests
         working-directory: frontend
         run: npm run test:ui
+
+  # ------------------------
+  # Deploy backend to Render
+  # ------------------------
+  deploy-backend:
+    runs-on: ubuntu-latest
+    needs: frontend-ui-tests
+    # Only deploy on main push (not for PRs)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Trigger Render backend deploy hook
+        run: |
+          curl -X POST "$RENDER_BACKEND_DEPLOY_HOOK_URL"
+        env:
+          RENDER_BACKEND_DEPLOY_HOOK_URL: ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK_URL }}
+
+  # ------------------------
+  # Deploy frontend to Vercel
+  # ------------------------
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    needs: frontend-ui-tests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      # Pull Vercel project config including production environment variables
+      - name: Pull Vercel environment
+        run: |
+          vercel pull --yes --environment=production \
+            --token=$VERCEL_TOKEN \
+            --project-id=$VERCEL_PROJECT_ID \
+            --org-id=$VERCEL_ORG_ID
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      # Build frontend with Vercel (prebuild bundle)
+      - name: Build frontend with Vercel
+        run: |
+          vercel build --prod \
+            --token=$VERCEL_TOKEN
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      # Deploy the prebuilt frontend to production
+      - name: Deploy frontend to Vercel
+        run: |
+          vercel deploy --prebuilt --prod \
+            --token=$VERCEL_TOKEN
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
