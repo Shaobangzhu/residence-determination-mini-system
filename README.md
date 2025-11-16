@@ -117,6 +117,7 @@ This automated pipeline guarantees:
 │
 └── README.md
 ```
+
 ## 🚀 Deployment Architecture
 
 This project follows a simple and reliable **frontend–backend separation** model optimized for modern web applications.
@@ -158,6 +159,20 @@ npm install && npm run build
 npm start
 ```
 
+## ▶️ Running Locally
+
+**Backend**
+
+    cd backend
+    npm install
+    npm run dev
+
+**Frontend**
+
+    cd frontend
+    npm install
+    npm run dev
+
 ## 🧪 Testing Locally
 
 ### Backend Unit Tests
@@ -175,20 +190,6 @@ npm start
 ### Playwright UI Tests
 
     npm run test:ui
-
-## ▶️ Running Locally
-
-**Backend**
-
-    cd backend
-    npm install
-    npm run dev
-
-**Frontend**
-
-    cd frontend
-    npm install
-    npm run dev
 
 ## 👤 Author
 
