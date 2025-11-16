@@ -108,6 +108,7 @@ Render builds and starts the backend from the `backend/` directory with:
 ```bash
 npm install && npm run build
 npm start
+```
 
 ## 🧪 Testing
 
