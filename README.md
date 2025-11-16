@@ -35,9 +35,61 @@ Designed as a portfolio-quality project with:
 - Zod validation
 - Jest + Supertest
 
-### **CI Pipeline**
+### **CI/CD Pipeline**
 
-- GitHub Actions (unit, API, UI tests)
+This project uses a full CI/CD pipeline built with **GitHub Actions**, ensuring code quality and reliable deployments.  
+The pipeline runs automatically on every pull request and on every push to the `main` branch affecting either the frontend or the backend.
+
+#### Continuous Integration (CI)
+
+The pipeline performs three layers of automated testing:
+
+1. **Backend Unit & API Tests**
+   - Runs Jest-based unit tests and Supertest-based API tests.
+   - Validates routing, payload validation, and decision logic.
+
+2. **Frontend Unit Tests (Vitest)**
+   - Executes component and utility tests inside a JSDOM environment.
+   - Ensures UI logic and state machine behavior remain stable.
+
+3. **Frontend UI Tests (Playwright)**
+   - Spins up the backend locally.
+   - Boots the Vite dev server.
+   - Runs full browser-based E2E tests simulating user interaction with the chatbot.
+
+All PRs must pass these tests before merging.
+
+---
+
+#### Continuous Deployment (CD)
+
+When changes are pushed to `main` and **all tests pass**, the pipeline triggers automated deployments:
+
+##### **Backend Deployment (Render)**
+- Uses Render’s Deploy Hook to build and release a new version of the Node.js/Express API.
+- Provides a stable long-running backend service for `/api/decision`, `/health`, and `/api/health`.
+
+##### **Frontend Deployment (Vercel)**
+- Uses the Vercel CLI to:
+  1. Pull production environment variables
+  2. Build the optimized React/Vite SPA
+  3. Deploy it globally via Vercel’s CDN
+
+This ensures the frontend always targets the correct backend via `VITE_API_BASE_URL`.
+
+---
+
+#### 🔗 Deployment Flow Summary
+
+GitHub Push/PR → CI Tests → (main only) → Deploy Backend → Deploy Frontend
+
+
+This automated pipeline guarantees:
+
+- Verified code before deployment  
+- Zero manual steps  
+- Fast and consistent releases  
+- Clear separation between frontend and backend environments  
 
 ## 📁 Directory Structure
 ```
@@ -108,9 +160,13 @@ npm start
 
 ## 🧪 Testing
 
-### Backend
+### Backend Unit Tests
 
-    npm run test
+    npm run test:unit
+
+### Backend API Tests
+
+    npm run test:api
 
 ### Frontend Unit Tests
 
