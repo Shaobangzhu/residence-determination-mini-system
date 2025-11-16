@@ -71,7 +71,7 @@ Designed as a portfolio-quality project with:
 ```
 ## 🚀 Deployment Architecture
 
-This project follows a simple and reliable **frontend–backend separation** model optimized for modern web applications and interview-ready demos.
+This project follows a simple and reliable **frontend–backend separation** model optimized for modern web applications.
 
 ---
 
