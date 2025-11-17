@@ -170,7 +170,7 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          vercel pull --yes --environment=production
+          vercel pull --yes --environment=production --token=$VERCEL_TOKEN
 
       # Build frontend with Vercel (prebuild bundle)
       - name: Build frontend with Vercel
@@ -180,7 +180,7 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          vercel build --prod
+          vercel build --prod --token=$VERCEL_TOKEN
 
       # Deploy the prebuilt frontend to production
       - name: Deploy frontend to Vercel
@@ -190,4 +190,4 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          vercel deploy --prebuilt --prod --yes
+          vercel deploy --prebuilt --prod --yes --token=$VERCEL_TOKEN
