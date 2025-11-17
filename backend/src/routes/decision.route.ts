@@ -2,8 +2,35 @@ import { Router } from "express";
 import { StudentInputSchema } from "../core/types";
 import { decideResidency } from "../core/decision";
 import { explainDecision } from "../core/explain";
+import { generateAiExplanation } from "../ai";
 
 const router = Router();
+
+// Debug endpoint to test AI explanation generation
+router.get('/debug/ai', async (req, res) => {
+  try {
+    // Sample input for debugging
+    const sampleInput = {
+      age: 21,
+      monthsInCA: 14,
+      hasCADriverLicense: true,
+      registeredToVoteInCA: true,
+      filesCATaxes: true,
+      financiallyIndependent: false,
+    };
+
+    const decision = decideResidency(sampleInput);
+    const explanation = await generateAiExplanation(sampleInput, decision);
+
+    res.json({
+      decision,
+      explanation,
+    });
+  } catch (err) {
+    console.error('Debug AI error:', err);
+    res.status(500).json({ error: 'AI debug endpoint failed' });
+  }
+});
 
 /**
  * POST /api/decide
