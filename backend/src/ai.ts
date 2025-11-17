@@ -1,11 +1,5 @@
-// backend/src/ai.ts
 import OpenAI from 'openai';
 import type { StudentInput, Decision } from './core/types';
-
-// Create the OpenAI client: read OPENAI_API_KEY from environment variables
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 /**
  * Generate a natural-language explanation using gpt-4o-mini
@@ -15,10 +9,21 @@ export async function generateAiExplanation(
   input: StudentInput,
   decision: Decision
 ): Promise<string> {
-  // If no key is configured, return a friendly fallback instead of throwing
-  if (!process.env.OPENAI_API_KEY) {
-    return 'AI explanation not available on this demo server (missing OPENAI_API_KEY).';
+    
+  // Safety check — no API key
+  const apiKey = process.env.OPENAI_API_KEY;
+
+  if (!apiKey) {
+    return (
+      "AI explanation is not available on this server (missing OPENAI_API_KEY). " +
+      "This is expected for CI tests and development without an API key."
+    );
   }
+
+  // Create client only when key exists
+  const client = new OpenAI({ apiKey });
+
+  // Build prompt
 
   const baseFacts = `
 Student info:
