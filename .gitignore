@@ -140,3 +140,6 @@ vite.config.ts.timestamp-*
 
 # Local Database files
 backend/rds.db
+
+# Local Environment files
+backend/.env

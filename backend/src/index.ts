@@ -1,7 +1,7 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import decisionRouter from "./routes/decision.route";
-import { saveStudentSession } from './db';
 
 /**
  * Main application entry point for the Express Server
@@ -23,28 +23,6 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api", decisionRouter);
-
-// Debug route to save a sample student session to the database
-app.get("/api/debug/save-sample-to-db", (_req, res) => {
-  try {
-    saveStudentSession({
-      created_at: new Date().toISOString(),
-      age: 20,
-      months_in_ca: 15,
-      has_ca_driver_license: true,
-      registered_to_vote_in_ca: false,
-      files_ca_taxes: true,
-      financially_independent: false,
-      decision_status: "resident",
-      decision_reasons: JSON.stringify(["debug insert"]),
-    });
-
-    res.json({ ok: true });
-  } catch (error) {
-    console.error("debug save error", error);
-    res.status(500).json({ ok: false, error: "DB insert failed" });
-  }
-});
 
 const PORT = process.env.PORT || 3000;
 if (require.main === module) {
