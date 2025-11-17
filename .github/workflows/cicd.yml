@@ -164,28 +164,30 @@ jobs:
 
       # Pull Vercel project config including production environment variables
       - name: Pull Vercel environment
-        run: |
-          vercel pull --yes --environment=production \
-            --token=$VERCEL_TOKEN \
-            --project-id=$VERCEL_PROJECT_ID \
-            --org-id=$VERCEL_ORG_ID
+        working-directory: frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          vercel pull --yes --environment=production
 
       # Build frontend with Vercel (prebuild bundle)
       - name: Build frontend with Vercel
-        run: |
-          vercel build --prod \
-            --token=$VERCEL_TOKEN
+        working-directory: frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          vercel build --prod
 
       # Deploy the prebuilt frontend to production
       - name: Deploy frontend to Vercel
-        run: |
-          vercel deploy --prebuilt --prod \
-            --token=$VERCEL_TOKEN
+        working-directory: frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          vercel deploy --prebuilt --prod --yes
