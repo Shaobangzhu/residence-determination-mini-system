@@ -15,9 +15,12 @@ Designed as a portfolio-quality project with:
 [Chatbot Interaction **Live Demo**](https://residence-determination-mini-sy-git-c10d0f-chaoran-lus-projects.vercel.app/)
 
 ---
-
-<img src="docs/ui-preview.png" width="500">
-
+<table>
+  <tr>
+    <td><img src="docs/demo1.png" width="400"/></td>
+    <td><img src="docs/demo2.png" width="400"/></td>
+  </tr>
+</table>
 ## 🔧 Tech Stack
 
 ### **Frontend**
