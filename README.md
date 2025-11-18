@@ -39,6 +39,7 @@ An interactive **Residency Determination chatbot** for UC Riverside, built with 
 
 ### **CI/CD Pipeline**
 
+<img src="docs/workflow.png"/> <br/>
 This project uses a full CI/CD pipeline built with **GitHub Actions**, ensuring code quality and reliable deployments.  
 The pipeline runs automatically on every pull request and on every push to the `main` branch affecting either the frontend or the backend.
 
