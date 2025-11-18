@@ -1,14 +1,6 @@
 # Residency Determination Mini System (RDS Assistant)
 
-An interactive **Residency Determination chatbot** for UC Riverside, built with a modern **full-stack TypeScript** architecture. This project demonstrates a realistic workflow for evaluating residency status using automated logic, clean UI design, and production-style engineering patterns.
-
-Designed as a portfolio-quality project with:
-
-- **React + State Machine chatbot UI**
-- **Express + Zod decision engine**
-- **Vitest + React Testing Library unit tests**
-- **Playwright end-to-end UI automation**
-- **Full CI pipeline (GitHub Actions)**
+An interactive **Residency Determination chatbot** for UC Riverside, built with a modern **full‑stack TypeScript** architecture.  This project simulates a realistic workflow used in Student Information Systems, combining automated residency logic, AI‑generated explanations, SQLite data persistence, and a production‑grade CI/CD pipeline.
 
 ## 🌟 Demo Preview
 
@@ -23,20 +15,26 @@ Designed as a portfolio-quality project with:
 </table>
 ## 🔧 Tech Stack
 
-### **Frontend**
+### Frontend – React + Vite (Vercel)
+- Custom chatbot UI  
+- State machine handled by `useChatStateMachine` hook  
+- DecisionCard renders system + AI interpretations  
+- Environment variables:
+  - `VITE_API_BASE_URL` → backend URL
 
-- React + TypeScript
-- Vite
-- State Machine (custom hook)
-- React Testing Library (RTL)
-- Vitest
-- Playwright (UI automation)
+### Backend – Node.js + Express (Render)
+- Routes:
+  - `POST /api/decide`
+  - `GET /api/health`
+- Modules:
+  - `/core` — decision logic & explanation engine
+  - `ai.ts` — calls GPT‑4o‑mini
+  - `persistence.ts` — SQLite write layer
+  - `db.ts` — DB bootstrap + migrations
 
-### **Backend**
-
-- Express.js (TypeScript)
-- Zod validation
-- Jest + Supertest
+### Database – SQLite
+- Lightweight, perfect for demos + small datasets
+- Decision history stored for audit + UI replay + future ML
 
 ### **CI/CD Pipeline**
 
@@ -96,19 +94,23 @@ This ensures the frontend always targets the correct backend via `VITE_API_BASE_
 │ └── cicd.yml # GitHub Push/PR → CI Tests → (main only) → Deploy Backend → Deploy Frontend
 | 
 ├── backend/
-│ ├── src/
-│ │ ├── core/ # Decision logic, explanation engine
-│ │ ├── routes/ # Express routes
-│ │ └── index.ts # Express app entry
-│ └── tests/ # Jest unit & API test suites
+│   ├── src/
+│   │   ├── ai.ts               # GPT‑4o‑mini integration
+│   │   ├── core/               # Residency logic, Zod schemas
+│   │   ├── routes/             # Express routes
+│   │   ├── persistence.ts      # SQLite insert helpers
+│   │   ├── db.ts               # SQLite setup + migrations
+│   │   └── index.ts            # Express server entry
+│   └── tests/                  # Jest + Supertest
 │
 ├── frontend/
-│ ├── src/
-│ │ ├── components/ # React UI components
-│ │ ├── hooks/ # useChatStateMachine
-│ │ ├── constants/ # Shared constants
-│ │ └── App.tsx
-│ └── tests/ # Vitest unit tests & # Playwright UI tests
+│   ├── src/
+│   │   ├── components/         # Chat UI components
+│   │   ├── hooks/              # useChatStateMachine
+│   │   ├── constants/          # Endpoints + config
+│   │   ├── types/              # Shared TS types
+│   │   └── App.tsx
+│   └── tests/                  # Vitest + Playwright
 │
 └── README.md
 ```
