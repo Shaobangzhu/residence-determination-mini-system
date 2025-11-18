@@ -144,4 +144,4 @@ vite.config.ts.timestamp-*
 *.db-wal
 
 # Local Environment files
-# tmp comment out for demo purpose backend/.env
+backend/.env
