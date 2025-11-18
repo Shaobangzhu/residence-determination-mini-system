@@ -7,5 +7,7 @@ export type ApiDecision = {
 
 export type ApiResponse = {
     decision: ApiDecision;
+
     explanation?: string;
+    aiExplanation?: string;
 }
