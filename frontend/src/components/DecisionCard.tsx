@@ -29,8 +29,21 @@ export const DecisionCard: React.FC<Props> = ({ message }) => {
           ))}
         </ul>
       </div>
-      {message.explanation && (
-        <p className="decision-expl">{message.explanation}</p>
+
+      {/* System explanation */}
+      {message.systemExplanation && (
+        <div className="decision-expl">
+          <strong>System Explanation:</strong>
+          <p>{message.systemExplanation}</p>
+        </div>
+      )}
+
+      {/* AI explanation */}
+      {message.aiExplanation && (
+        <div className="decision-expl-ai">
+          <strong>AI Explanation:</strong>
+          <p>{message.aiExplanation}</p>
+        </div>
       )}
       <p className="decision-note">
         This is a demo classification and not official residency determination.
