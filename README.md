@@ -13,6 +13,7 @@ An interactive **Residency Determination chatbot** for UC Riverside, built with 
     <td><img src="docs/demo2.png" width="400"/></td>
   </tr>
 </table>
+
 ## 🔧 Tech Stack
 
 ### Frontend – React + Vite (Vercel)
