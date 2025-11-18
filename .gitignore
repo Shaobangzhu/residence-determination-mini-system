@@ -138,8 +138,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# Local Database files
-backend/rds.db
+# SQLite database files (runtime only)
+*.db
+*.db-shm
+*.db-wal
 
 # Local Environment files
 backend/.env

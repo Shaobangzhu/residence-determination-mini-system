@@ -1,22 +1,25 @@
-import Database from 'better-sqlite3';
-import path from 'path';
+import Database from "better-sqlite3";
+import path from "path";
+import fs from "fs";
 
-// Path to the SQLite DB file: backend/rds.db
-const dbPath = path.join(__dirname, '..', 'rds.db');
+const DB_FILE = process.env.DB_PATH || path.join(__dirname, "..", "rds.db");
 
-// Open or create the database
-const db = new Database(dbPath);
+// Ensure the directory exists
+const dir = path.dirname(DB_FILE);
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir, { recursive: true });
+}
 
-// Optional: improve concurrent read performance
-db.pragma('journal_mode = WAL');
+// Establish a SQLite connection (synchronous; sufficient for a small demo)
+export const db = new Database(DB_FILE);
 
-// Initialize table (create if it does not exist)
+// Simple migration: create the decision_records table
 db.exec(`
-  CREATE TABLE IF NOT EXISTS student_sessions (
+  CREATE TABLE IF NOT EXISTS decision_records (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at TEXT NOT NULL,
 
-    -- Fields corresponding to StudentInput
+    -- student input fields
     age INTEGER NOT NULL,
     months_in_ca INTEGER NOT NULL,
     has_ca_driver_license INTEGER NOT NULL,
@@ -24,62 +27,12 @@ db.exec(`
     files_ca_taxes INTEGER NOT NULL,
     financially_independent INTEGER NOT NULL,
 
-    -- Decision result
-    decision_status TEXT NOT NULL,
-    decision_reasons TEXT NOT NULL  -- store as JSON string
+    -- decision result
+    status TEXT NOT NULL,
+    reasons_json TEXT NOT NULL,
+
+    -- explanations
+    system_explanation TEXT NOT NULL,
+    ai_explanation TEXT
   );
 `);
-
-export type StudentSessionRow = {
-  id?: number;
-  created_at: string;
-
-  age: number;
-  months_in_ca: number;
-  has_ca_driver_license: boolean;
-  registered_to_vote_in_ca: boolean;
-  files_ca_taxes: boolean;
-  financially_independent: boolean;
-
-  decision_status: string;   // 'resident' | 'nonresident' | 'needs_review'
-  decision_reasons: string;  // JSON.stringify([...])
-};
-
-// Prepared insert statement
-const insertStmt = db.prepare(`
-  INSERT INTO student_sessions (
-    created_at,
-    age,
-    months_in_ca,
-    has_ca_driver_license,
-    registered_to_vote_in_ca,
-    files_ca_taxes,
-    financially_independent,
-    decision_status,
-    decision_reasons
-  ) VALUES (
-    @created_at,
-    @age,
-    @months_in_ca,
-    @has_ca_driver_license,
-    @registered_to_vote_in_ca,
-    @files_ca_taxes,
-    @financially_independent,
-    @decision_status,
-    @decision_reasons
-  )
-`);
-
-// Export a simple function for saving a record
-export function saveStudentSession(
-  row: Omit<StudentSessionRow, 'id'>
-): void {
-  insertStmt.run({
-    ...row,
-    // Booleans converted to 0/1 for DB storage
-    has_ca_driver_license: row.has_ca_driver_license ? 1 : 0,
-    registered_to_vote_in_ca: row.registered_to_vote_in_ca ? 1 : 0,
-    files_ca_taxes: row.files_ca_taxes ? 1 : 0,
-    financially_independent: row.financially_independent ? 1 : 0
-  });
-}
