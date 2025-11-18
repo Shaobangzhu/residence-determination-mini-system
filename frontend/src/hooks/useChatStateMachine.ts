@@ -60,7 +60,7 @@ export function useChatStateMachine() {
 
   const pushDecisionCard = (
     decision: ApiDecision,
-    sysExplanation: string | undefined,
+    explanations: string | undefined,
     aiExplanation: string | undefined,
     confidence: number,
     keyFactors: string[]
@@ -72,7 +72,7 @@ export function useChatStateMachine() {
         sender: 'bot',
         kind: 'decision',
         decision,
-        sysExplanation,
+        explanations,
         aiExplanation,
         confidence,
         keyFactors
@@ -197,7 +197,7 @@ export function useChatStateMachine() {
 
         const confidence = computeConfidence(data.decision);
         const keyFactors = buildKeyFactors(form, data.decision);
-        pushDecisionCard(data.decision, data.explanation, data.aiExplanation, confidence, keyFactors);
+        pushDecisionCard(data.decision, data.explanations, data.aiExplanation, confidence, keyFactors);
       }
     } catch (err: unknown) {
       console.error(err);

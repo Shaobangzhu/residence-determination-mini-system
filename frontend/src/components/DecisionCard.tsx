@@ -31,10 +31,10 @@ export const DecisionCard: React.FC<Props> = ({ message }) => {
       </div>
 
       {/* System explanation */}
-      {message.systemExplanation && (
+      {message.explanations && (
         <div className="decision-expl">
           <strong>System Explanation:</strong>
-          <p>{message.systemExplanation}</p>
+          <p>{message.explanations}</p>
         </div>
       )}
 

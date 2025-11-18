@@ -18,7 +18,7 @@ const baseMessage: DecisionMessage = {
     'Intent: 2 residency tie(s) found',
     'CA Driver License: Found',
   ],
-  systemExplanation: 'System thinks you likely qualify as a California resident.',
+  explanations: 'System thinks you likely qualify as a California resident.',
   aiExplanation: 'AI explanation from GPT: you appear to meet the residency requirements.',
 };
 
@@ -28,7 +28,7 @@ describe('DecisionCard', () => {
 
     // Decision + label
     expect(screen.getByText(/Decision:/i)).toBeInTheDocument();
-    expect(screen.getByText(/California Resident/i)).toBeInTheDocument();
+    expect(screen.getByText('California Resident')).toBeInTheDocument();
 
     // Confidence
     expect(screen.getByText(/Confidence:/i)).toBeInTheDocument();

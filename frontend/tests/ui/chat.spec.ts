@@ -28,14 +28,26 @@ test("user can complete a residency flow", async ({ page }) => {
 
   // Independent
   await page.getByPlaceholder(/Type your answer here…/i).fill("no");
+
+  // The /api/decide request is triggered by the final Enter.
+  const responsePromise = page.waitForResponse((resp) =>
+    resp.url().includes("/api/decide") && resp.status() === 200
+  );
+
+  // Submit final answer
   await page.keyboard.press("Enter");
 
-  // wauit for decision card
+  // wait for decision card
+  await responsePromise;
+
+  // Check that decision card is displayed
   await expect(page.getByText("Decision:", { exact: true })).toBeVisible();
 
-  await expect(
-    page.getByText(/California Resident|Nonresident|Needs Review/i)
-  ).toBeVisible();
+  const decisionStatus = page.locator(".decision-status");
+  await expect(decisionStatus).toBeVisible();
+  await expect(decisionStatus).toHaveText(
+    /California Resident|Nonresident|Needs Review/i
+  );
 
   // NEW: system explanation block
   await expect(page.getByText(/System Explanation:/i)).toBeVisible();

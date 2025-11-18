@@ -13,7 +13,7 @@ export type TextMessage = MessageBase & {
 export type DecisionMessage = MessageBase & {
   kind: "decision";
   decision: ApiDecision;
-  systemExplanation?: string;
+  explanations?: string;
   aiExplanation?: string;
   confidence: number;
   keyFactors: string[];
