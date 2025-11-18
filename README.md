@@ -7,12 +7,22 @@ An interactive **Residency Determination chatbot** for UC Riverside, built with 
 [Chatbot Interaction **Live Demo**](https://residence-determination-mini-sy-git-c10d0f-chaoran-lus-projects.vercel.app/)
 
 ---
-<table>
-  <tr>
-    <td><img src="docs/demo1.png" width="400"/></td>
-    <td><img src="docs/demo2.png" width="400"/></td>
-  </tr>
-</table>
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="docs/demo1.png" width="420" alt="Chatbot initial interaction"/>
+        <br/>
+        <sub><i>Chatbot conversation flow</i></sub>
+      </td>
+      <td align="center">
+        <img src="docs/demo2.png" width="420" alt="Decision summary card"/>
+        <br/>
+        <sub><i>Decision summary & explanations</i></sub>
+      </td>
+    </tr>
+  </table>
+</div>
 
 ## 🔧 Tech Stack
 
@@ -39,7 +49,12 @@ An interactive **Residency Determination chatbot** for UC Riverside, built with 
 
 ### **CI/CD Pipeline**
 
-<img src="docs/workflow.png"/> <br/>
+<div align="center">
+  <img src="docs/workflow.png" width="950" alt="System architecture and CI/CD workflow diagram"/>
+  <br/>
+  <sub><i>Deployment architecture + CI/CD workflow</i></sub>
+</div>
+
 This project uses a full CI/CD pipeline built with **GitHub Actions**, ensuring code quality and reliable deployments.  
 The pipeline runs automatically on every pull request and on every push to the `main` branch affecting either the frontend or the backend.
 
