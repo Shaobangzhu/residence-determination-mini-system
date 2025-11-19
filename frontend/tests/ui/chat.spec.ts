@@ -31,7 +31,7 @@ test("user can complete a residency flow", async ({ page }) => {
 
   // The /api/decide request is triggered by the final Enter.
   const responsePromise = page.waitForResponse((resp) =>
-    resp.url().includes("/api/decide") && resp.status() === 200
+    resp.url().includes("/api/decision") && resp.status() === 200
   );
 
   // Submit final answer

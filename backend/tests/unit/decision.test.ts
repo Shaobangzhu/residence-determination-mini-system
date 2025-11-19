@@ -45,7 +45,7 @@ describe("decision.route", () => {
     };
 
     const res = await request(app)
-      .post("/api/decide?explain=true")
+      .post("/api/decision?explain=true")
       .send(payload);
 
     expect(res.status).toBe(200);
@@ -89,7 +89,7 @@ describe("decision.route", () => {
     };
 
     const res = await request(app)
-      .post("/api/decide?explain=false")
+      .post("/api/decision?explain=false")
       .send(payload);
 
     expect(res.status).toBe(200);

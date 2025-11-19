@@ -35,7 +35,7 @@ describe('POST /api/decide (with mocked AI & DB)', () => {
     };
 
     const res = await request(app)
-      .post('/api/decide') 
+      .post('/api/decision') 
       .send(payload);
 
     expect(res.status).toBe(200);
@@ -55,7 +55,7 @@ describe('POST /api/decide (with mocked AI & DB)', () => {
 
   it('returns 400 for invalid input', async () => {
     const res = await request(app)
-      .post('/api/decide')
+      .post('/api/decision')
       .send({ invalid: 'data' });
 
     expect(res.status).toBe(400);
