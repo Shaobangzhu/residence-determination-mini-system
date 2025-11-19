@@ -8,7 +8,6 @@ const baseInput: StudentInput = {
   hasCADriverLicense: false,
   registeredToVoteInCA: false,
   filesCATaxes: false,
-  financiallyIndependent: true,
 };
 
 function makeInput(overrides: Partial<StudentInput>): StudentInput {

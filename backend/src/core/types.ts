@@ -10,7 +10,6 @@ export const StudentInputSchema = z.object({
   hasCADriverLicense: z.boolean(),
   registeredToVoteInCA: z.boolean(),
   filesCATaxes: z.boolean(),
-  financiallyIndependent: z.boolean().optional().default(false)
 });
 
 export type StudentInput = z.infer<typeof StudentInputSchema>;
