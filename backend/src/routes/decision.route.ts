@@ -1,9 +1,7 @@
 import { Router } from "express";
 import { StudentInputSchema, Decision } from "../core/types";
-import { decideResidency } from "../core/decision";
-import { explainDecision } from "../core/explain";
-import { generateAiExplanation } from "../ai";
-import { saveDecisionRecord } from "../persistence";
+import { computeDecisionResult } from "../services/decision-compute.service";
+import { persistDecisionRecord } from "../services/decision-record.service";
 
 const router = Router();
 
@@ -12,63 +10,49 @@ const router = Router();
  * Body: StudentInput
  * Query: ?explain=true to include explanation text
  */
-router.post('/decision', async (req, res) => {
-    const parsed = StudentInputSchema.safeParse(req.body);
+router.post("/decision", async (req, res) => {
+  const parsed = StudentInputSchema.safeParse(req.body);
 
-    if (!parsed.success) {
-        return res.status(400).json({
-            error: 'Invalid input',
-            issues: parsed.error.format(),
-        });
-    }
+  if (!parsed.success) {
+    return res.status(400).json({
+      error: "Invalid input",
+      issues: parsed.error.format(),
+    });
+  }
 
-    const input = parsed.data;
-    const decision: Decision = decideResidency(input);
+  const input = parsed.data;
 
-    // Generate system explanation
-    const systemExplanation = explainDecision(input, decision);
+  const explainFlag =
+    String(req.query.explain ?? "true").toLowerCase() === "true";
 
-    // Check if AI explanation is requested
-    const explainFlag = String(req.query.explain ?? "true").toLowerCase() === 'true';
+  // Compute decision and explanations
+  const result = await computeDecisionResult(input, {
+    withAiExplanation: explainFlag,
+  });
 
-    // Generate AI explanation if requested
-    let aiExplanation: string | undefined;
+  // Write to database
+  try {
+    persistDecisionRecord(input, result);
+  } catch (error) {
+    console.error("Error saving decision record:", error);
+  }
 
-    // Save the decision record (including AI explanation if generated)
-    try {
-      aiExplanation = await generateAiExplanation(input, decision);
-    } catch (error) {
-      console.error("Error generating AI explanation:", error);
-    }
+  // Build response
+  const responseBody: {
+    decision: Decision;
+    explanations?: string;
+    aiExplanation?: string;
+  } = {
+    decision: result.decision,
+  };
 
-    // Write to database
-    try {
-      saveDecisionRecord({
-        input,
-        decision,
-        systemExplanation,
-        aiExplanation,
-      });
-    } catch (error) {
-      console.error("Error saving decision record:", error);
-    }
+  // Include explanations if requested
+  if (explainFlag) {
+    responseBody.explanations = result.systemExplanation;
+    responseBody.aiExplanation = result.aiExplanation;
+  }
 
-    // Build response
-    const responseBody: {
-      decision: Decision;
-      explanations?: string;
-      aiExplanation?: string;
-    } = {
-      decision,
-    };
-
-    // Include explanations if requested
-    if (explainFlag) {
-      responseBody.explanations = systemExplanation;
-      responseBody.aiExplanation = aiExplanation;
-    }
-
-    return res.json(responseBody);
+  return res.json(responseBody);
 });
 
 export default router;
