@@ -1,3 +1,4 @@
+import { test, expect } from "@jest/globals";
 import { explainDecision } from '../../src/core/explain';
 import { decideResidency } from '../../src/core/decision';
 import { StudentInput } from '../../src/core/types';
