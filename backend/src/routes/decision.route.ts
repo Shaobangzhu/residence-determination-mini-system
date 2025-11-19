@@ -12,7 +12,7 @@ const router = Router();
  * Body: StudentInput
  * Query: ?explain=true to include explanation text
  */
-router.post('/decide', async (req, res) => {
+router.post('/decision', async (req, res) => {
     const parsed = StudentInputSchema.safeParse(req.body);
 
     if (!parsed.success) {
