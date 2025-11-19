@@ -24,6 +24,34 @@ An interactive **Residency Determination chatbot** for UC Riverside, built with 
   </table>
 </div>
 
+## 📁 Directory Structure
+```
+.
+├── .github/workflows
+│ └── cicd.yml # GitHub Push/PR → CI Tests → (main only) → Deploy Backend → Deploy Frontend
+| 
+├── backend/
+│   ├── src/
+│   │   ├── ai.ts               # GPT‑4o‑mini integration
+│   │   ├── core/               # Residency logic, Zod schemas
+│   │   ├── routes/             # Express routes
+│   │   ├── persistence.ts      # SQLite insert helpers
+│   │   ├── db.ts               # SQLite setup + migrations
+│   │   └── index.ts            # Express server entry
+│   └── tests/                  # Jest + Supertest
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/         # Chat UI components
+│   │   ├── hooks/              # useChatStateMachine
+│   │   ├── constants/          # Endpoints + config
+│   │   ├── types/              # Shared TS types
+│   │   └── App.tsx
+│   └── tests/                  # Vitest + Playwright
+│
+└── README.md
+```
+
 ## 🔧 Tech Stack
 
 ### Frontend – React + Vite (Vercel)
@@ -103,34 +131,6 @@ This ensures the frontend always targets the correct backend via `VITE_API_BASE_
 - Zero manual steps  
 - Fast and consistent releases  
 - Clear separation between frontend and backend environments  
-
-## 📁 Directory Structure
-```
-.
-├── .github/workflows
-│ └── cicd.yml # GitHub Push/PR → CI Tests → (main only) → Deploy Backend → Deploy Frontend
-| 
-├── backend/
-│   ├── src/
-│   │   ├── ai.ts               # GPT‑4o‑mini integration
-│   │   ├── core/               # Residency logic, Zod schemas
-│   │   ├── routes/             # Express routes
-│   │   ├── persistence.ts      # SQLite insert helpers
-│   │   ├── db.ts               # SQLite setup + migrations
-│   │   └── index.ts            # Express server entry
-│   └── tests/                  # Jest + Supertest
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/         # Chat UI components
-│   │   ├── hooks/              # useChatStateMachine
-│   │   ├── constants/          # Endpoints + config
-│   │   ├── types/              # Shared TS types
-│   │   └── App.tsx
-│   └── tests/                  # Vitest + Playwright
-│
-└── README.md
-```
 
 ## 🚀 Deployment Architecture
 

@@ -1,7 +1,7 @@
-// backend/src/persistence.ts
 import { db } from "./db";
 import type { StudentInput, Decision } from "./core/types";
 
+// Parameters required to save a decision record.
 type SaveDecisionParams = {
   input: StudentInput;
   decision: Decision;
@@ -9,7 +9,8 @@ type SaveDecisionParams = {
   aiExplanation?: string;
 };
 
-const insertStmt = db.prepare(`
+// Prepared statement for inserting a decision record.
+const insertStatement = db.prepare(`
   INSERT INTO decision_records (
     created_at,
     age,
@@ -44,7 +45,7 @@ const insertStmt = db.prepare(`
 export function saveDecisionRecord(params: SaveDecisionParams): void {
   const { input, decision, systemExplanation, aiExplanation } = params;
 
-  insertStmt.run({
+  insertStatement.run({
     age: input.age,
     monthsInCA: input.monthsInCA,
     hasCADriverLicense: input.hasCADriverLicense ? 1 : 0,
