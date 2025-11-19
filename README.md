@@ -24,6 +24,14 @@ An interactive **Residency Determination chatbot** for UC Riverside, built with 
   </table>
 </div>
 
+## 🔄 Runtime Workflow (End-to-End)
+
+<div align="center">
+  <img src="docs/e2e.png" width="900" alt="End-to-end residency decision runtime workflow diagram"/>
+  <br/>
+  <sub><i>React chat UI sends a decision request to the Express API, the core rule engine and GPT-4o mini generate explanations, results are saved to SQLite, and a JSON decision response updates the chat UI.</i></sub>
+</div>
+
 ## 📁 Directory Structure
 ```
 .
