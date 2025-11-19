@@ -1,4 +1,3 @@
-// src/components/ChatPage.tsx
 import React from 'react';
 import { useChatStateMachine } from '../hooks/useChatStateMachine';
 import { MessageList } from './MessageList';

@@ -32,6 +32,10 @@ body,
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  /* Set height to 80% of viewport height with a max height */
+  height: 80vh;
+  max-height: 720px;
 }
 
 /* Header */
@@ -74,11 +78,15 @@ body,
   display: flex;
   flex-direction: column;
   background: #f4f5f7;
+
+  /* Make body take up remaining space */
+  flex: 1;
+  min-height: 0;
 }
 
 .chat-window {
   padding: 16px 16px 8px;
-  max-height: 520px;
+  flex: 1; /* Take up remaining space */
   overflow-y: auto;
 }
 
