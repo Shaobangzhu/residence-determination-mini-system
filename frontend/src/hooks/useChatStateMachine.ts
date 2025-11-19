@@ -228,9 +228,6 @@ export function useChatStateMachine() {
       } else {
         const data: ApiResponse = await res.json();
 
-        // Small artificial delay so the UI feels like it is "thinking"
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
         const confidence = computeConfidence(data.decision);
         const keyFactors = buildKeyFactors(form, data.decision);
         pushDecisionCard(data.decision, data.explanations, data.aiExplanation, confidence, keyFactors);
