@@ -26,9 +26,6 @@ test("user can complete a residency flow", async ({ page }) => {
   await page.getByPlaceholder(/Type your answer here…/i).fill("yes");
   await page.keyboard.press("Enter");
 
-  // Independent
-  await page.getByPlaceholder(/Type your answer here…/i).fill("no");
-
   // The /api/decide request is triggered by the final Enter.
   const responsePromise = page.waitForResponse((resp) =>
     resp.url().includes("/api/decision") && resp.status() === 200

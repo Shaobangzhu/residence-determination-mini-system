@@ -167,7 +167,6 @@ export function useChatStateMachine() {
     if (payload.hasCADriverLicense) factors.push('CA Driver License: Found');
     if (payload.registeredToVoteInCA) factors.push('CA Voter Registration: Found');
     if (payload.filesCATaxes) factors.push('CA Tax Filing: Found');
-    if (payload.financiallyIndependent) factors.push('Financially independent');
 
     factors.push(`System decision: ${decision.status}`);
 
@@ -192,9 +191,6 @@ export function useChatStateMachine() {
         break;
       case 'askTax':
         pushBotText('Do you file California state income taxes as a resident? (yes / no)');
-        break;
-      case 'askIndependent':
-        pushBotText('Are you financially independent from your parents/guardians? (yes / no)');
         break;
       case 'done':
         pushBotText('If you want to run another scenario, type "restart".');
@@ -321,16 +317,6 @@ export function useChatStateMachine() {
           return;
         }
         setKV('filesCATaxes', yesNo);
-        askNextQuestion('askIndependent');
-        return;
-      }
-      case 'askIndependent': {
-        const yesNo = parseYesNo(text);
-        if (yesNo === null) {
-          pushBotText('Please answer with yes or no.');
-          return;
-        }
-        setKV('financiallyIndependent', yesNo);
         await callBackendAndShowDecision();
         return;
       }

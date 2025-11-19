@@ -25,7 +25,6 @@ db.exec(`
     has_ca_driver_license INTEGER NOT NULL,
     registered_to_vote_in_ca INTEGER NOT NULL,
     files_ca_taxes INTEGER NOT NULL,
-    financially_independent INTEGER NOT NULL,
 
     -- decision result
     status TEXT NOT NULL,

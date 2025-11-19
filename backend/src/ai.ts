@@ -32,7 +32,6 @@ Student info:
 - CA Driver License: ${input.hasCADriverLicense}
 - Registered to vote in CA: ${input.registeredToVoteInCA}
 - Files CA taxes: ${input.filesCATaxes}
-- Financially independent: ${input.financiallyIndependent ?? false}
 
 System decision: ${decision.status}
 Reasons:

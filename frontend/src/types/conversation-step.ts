@@ -6,6 +6,5 @@ export type ConversationStep =
   | "askCADriver"
   | "askVote"
   | "askTax"
-  | "askIndependent"
   | "evaluating"
   | "done";

@@ -9,7 +9,6 @@ test('explainDecision returns readable text', () => {
     hasCADriverLicense: true,
     registeredToVoteInCA: true,
     filesCATaxes: false,
-    financiallyIndependent: true
   };
   const decision = decideResidency(input);
   const text = explainDecision(input, decision);

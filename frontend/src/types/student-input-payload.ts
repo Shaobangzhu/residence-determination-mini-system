@@ -4,7 +4,6 @@ export type StudentInputPayload = {
   hasCADriverLicense: boolean;
   registeredToVoteInCA: boolean;
   filesCATaxes: boolean;
-  financiallyIndependent: boolean;
 };
 
 export const initialForm: StudentInputPayload = {
@@ -13,5 +12,4 @@ export const initialForm: StudentInputPayload = {
   hasCADriverLicense: false,
   registeredToVoteInCA: false,
   filesCATaxes: false,
-  financiallyIndependent: false
 };
