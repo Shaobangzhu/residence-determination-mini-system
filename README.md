@@ -43,7 +43,8 @@ An interactive **Residency Determination chatbot** for UC Riverside, built with 
 │   │   ├── ai.ts               # GPT‑4o‑mini integration
 │   │   ├── core/               # Residency logic, Zod schemas
 │   │   ├── routes/             # Express routes
-│   │   ├── persistence.ts      # SQLite insert helpers
+│   │   ├── services/           # Reusible app business logic and operations
+│   │   ├── persistence.ts      # Persistence module encapsulates database CRUD Operations
 │   │   ├── db.ts               # SQLite setup + migrations
 │   │   └── index.ts            # Express server entry
 │   └── tests/                  # Jest + Supertest
