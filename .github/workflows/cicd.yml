@@ -170,7 +170,7 @@ jobs:
 
       # Pull Vercel project config including production environment variables
       - name: Pull Vercel environment
-        working-directory: frontend
+        # REMOVED: working-directory: frontend, # Not needed as vercel pull creates/verifies .vercel in cwd
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -179,18 +179,18 @@ jobs:
           vercel pull --yes --environment=production --token=$VERCEL_TOKEN
 
       # Build frontend with Vercel (prebuild bundle)
-      - name: Build frontend with Vercel
-        working-directory: frontend
+      - name: Build frontend with Vercel (debug)
+        # working-directory: frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          vercel build --prod --token=$VERCEL_TOKEN
+          vercel build --prod --token=$VERCEL_TOKEN --debug
 
       # Deploy the prebuilt frontend to production
       - name: Deploy frontend to Vercel
-        working-directory: frontend
+        # working-directory: frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
