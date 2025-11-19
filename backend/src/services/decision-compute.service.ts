@@ -1,13 +1,8 @@
 import type { StudentInput, Decision } from "../core/types";
+import type { DecisionComputationResult } from "./types";
 import { decideResidency } from "../core/decision";
 import { explainDecision } from "../core/explain";
 import { generateAiExplanation } from "../ai";
-
-export type DecisionComputationResult = {
-  decision: Decision;
-  systemExplanation: string;
-  aiExplanation?: string;
-};
 
 type ComputeOptions = {
   withAiExplanation?: boolean;
