@@ -7,14 +7,27 @@ import { type StudentInputPayload, initialForm } from '../types/student-input-pa
 
 import { DECIDE_ENDPOINT } from '../constants/endpoints';
 
+/**
+ * Chat state machine hook
+ *
+ * - Manages conversation step (welcome → questions → evaluating → done)
+ * - Stores user answers in `form`
+ * - Keeps full message history for UI
+ * - Calls backend `/api/decide` and turns response into a decision card
+ */
 export function useChatStateMachine() {
+  // All messages shown in the chat window (user + bot + decision card)
   const [messages, setMessages] = useState<Message[]>([]);
+  // Current text in the input box
   const [input, setInput] = useState('');
+  // Structured student input that will be sent to the backend
   const [form, setForm] = useState<StudentInputPayload>(initialForm);
+  // High-level conversation state
   const [step, setStep] = useState<ConversationStep>('welcome');
+  // Whether we are currently calling the backend / evaluating
   const [loading, setLoading] = useState(false);
 
-  // Initial welcome messages
+  // On first mount, push the initial welcome + first question messages
   useEffect(() => {
     const firstBotMessages: Message[] = [
       {
@@ -34,6 +47,7 @@ export function useChatStateMachine() {
     setStep('askAge');
   }, []);
 
+  // Append a user text message to the message list
   const pushUserText = (text: string) => {
     setMessages(prev => [
       ...prev,
@@ -46,6 +60,7 @@ export function useChatStateMachine() {
     ]);
   };
 
+  // Append a bot text message to the message list
   const pushBotText = (text: string) => {
     setMessages(prev => [
       ...prev,
@@ -58,6 +73,7 @@ export function useChatStateMachine() {
     ]);
   };
 
+  // Append a decision card message (with decision + explanations)
   const pushDecisionCard = (
     decision: ApiDecision,
     explanations: string | undefined,
@@ -80,6 +96,7 @@ export function useChatStateMachine() {
     ]);
   };
 
+  // Set a key-value pair to update a single field in the StudentInputPayload
   const setKV = <K extends keyof StudentInputPayload>(
     key: K,
     value: StudentInputPayload[K]
@@ -90,6 +107,13 @@ export function useChatStateMachine() {
     }));
   };
 
+  /**
+   * Parse a yes / no style answer into boolean
+   * Returns:
+   *   true  → yes / y / true
+   *   false → no / n / false
+   *   null  → anything else (invalid answer)
+   */
   const parseYesNo = (text: string): boolean | null => {
     const trimmed = text.trim().toLowerCase();
     if (['yes', 'y', 'true'].includes(trimmed)) return true;
@@ -97,6 +121,10 @@ export function useChatStateMachine() {
     return null;
   };
 
+   /**
+   * Compute a confidence score based on system decision.
+   * This is a simple heuristic for demo purposes.
+   */
   const computeConfidence = (decision: ApiDecision): number => {
     switch (decision.status) {
       case 'resident':
@@ -109,6 +137,10 @@ export function useChatStateMachine() {
     }
   };
 
+  /**
+   * Build a list of key decision factors for the decision card UI.
+   * Uses the student input plus the backend decision status.
+   */
   const buildKeyFactors = (
     payload: StudentInputPayload,
     decision: ApiDecision
@@ -123,6 +155,7 @@ export function useChatStateMachine() {
       factors.push('Physical Presence < 6 months');
     }
 
+    // Count “intent” ties to California
     const ties = [
       payload.hasCADriverLicense,
       payload.registeredToVoteInCA,
@@ -141,6 +174,7 @@ export function useChatStateMachine() {
     return factors;
   };
 
+  // Ask the next question based on the conversation step
   const askNextQuestion = (next: ConversationStep) => {
     setStep(next);
 
@@ -172,6 +206,7 @@ export function useChatStateMachine() {
     }
   };
 
+  // Call the backend /api/decide endpoint and show the resulting decision card
   const callBackendAndShowDecision = async () => {
     setStep('evaluating');
     setLoading(true);
@@ -185,6 +220,7 @@ export function useChatStateMachine() {
       });
 
       if (!res.ok) {
+        // Try to read error message from backend; fallback to HTTP status
         const data = await res.json().catch(() => ({}));
         const errorMsg =
           (data as { error?: string }).error || `Request failed with status ${res.status}`;
@@ -192,7 +228,7 @@ export function useChatStateMachine() {
       } else {
         const data: ApiResponse = await res.json();
 
-        // 1s thinking delay
+        // Small artificial delay so the UI feels like it is "thinking"
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         const confidence = computeConfidence(data.decision);
@@ -203,12 +239,14 @@ export function useChatStateMachine() {
       console.error(err);
       pushBotText('Server error. Please make sure the backend is running.');
     } finally {
+      // After evaluation, mark conversation as done and allow restart
       setLoading(false);
       setStep('done');
       askNextQuestion('done');
     }
   };
 
+  // Reset the entire conversation to initial state
   const resetConversation = () => {
     setForm(initialForm);
     setMessages([
@@ -229,6 +267,7 @@ export function useChatStateMachine() {
     setInput('');
   };
 
+  // Process the user answer for the current step
   const processAnswerForStep = async (currentStep: ConversationStep, text: string) => {
     const trimmedLower = text.trim().toLowerCase();
 
@@ -307,6 +346,7 @@ export function useChatStateMachine() {
     }
   };
 
+  // Handle when the user clicks "Send" or presses Enter
   const handleSend = async () => {
     const trimmed = input.trim();
     if (!trimmed || loading) return;
@@ -318,6 +358,7 @@ export function useChatStateMachine() {
     await processAnswerForStep(currentStep, trimmed);
   };
 
+  // Dynamic placeholder text based on loading state and conversation step
   const placeholder =
     loading
       ? 'Evaluating…'
