@@ -203,7 +203,7 @@ export function useChatStateMachine() {
   };
 
   // Call the backend /api/decide endpoint and show the resulting decision card
-  const callBackendAndShowDecision = async () => {
+  const callBackendAndShowDecision = async (payload: StudentInputPayload) => {
     setStep('evaluating');
     setLoading(true);
     pushBotText('Got it. Let me evaluate your residency based on these answers...');
@@ -212,7 +212,7 @@ export function useChatStateMachine() {
       const res = await fetch(DECIDE_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify(payload)
       });
 
       if (!res.ok) {
@@ -225,7 +225,7 @@ export function useChatStateMachine() {
         const data: ApiResponse = await res.json();
 
         const confidence = computeConfidence(data.decision);
-        const keyFactors = buildKeyFactors(form, data.decision);
+        const keyFactors = buildKeyFactors(payload, data.decision);
         pushDecisionCard(data.decision, data.explanations, data.aiExplanation, confidence, keyFactors);
       }
     } catch (err: unknown) {
@@ -316,8 +316,16 @@ export function useChatStateMachine() {
           pushBotText('Please answer with yes or no.');
           return;
         }
-        setKV('filesCATaxes', yesNo);
-        await callBackendAndShowDecision();
+        //Build the latest snapshot of the form including the LAST answer
+        const nextForm: StudentInputPayload = {
+          ...form,
+          filesCATaxes: yesNo
+        };
+        // Update form state
+        setForm(nextForm);
+
+        //Use the freshest form to call the backend
+        await callBackendAndShowDecision(nextForm);
         return;
       }
       case 'done': {
