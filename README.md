@@ -52,6 +52,8 @@ An interactive **Residency Determination chatbot** for UC Riverside, built with 
 ├── frontend/
 │   ├── src/
 │   │   ├── components/         # Chat UI components
+│   │   ├── utils/              # Pure, side-effect-free helper functions used across the project
+│   │   ├── api/                # Defined all backend communication logic
 │   │   ├── hooks/              # useChatStateMachine
 │   │   ├── constants/          # Endpoints + config
 │   │   ├── types/              # Shared TS types

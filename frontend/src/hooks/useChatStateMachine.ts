@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import type { ApiDecision, ApiResponse } from '../types/api-types';
+import type { ApiDecision } from '../types/api-types';
 import type { ConversationStep } from '../types/conversation-step';
 import type { Message } from '../types/message-types';
 import { type StudentInputPayload, initialForm } from '../types/student-input-payload';
 
-import { DECIDE_ENDPOINT } from '../constants/endpoints';
+import { decideResidency } from '../api/decisionApi';
+import { computeConfidence, buildKeyFactors } from '../utils/decisionHelpers';
 
 /**
  * Chat state machine hook
@@ -121,58 +122,6 @@ export function useChatStateMachine() {
     return null;
   };
 
-   /**
-   * Compute a confidence score based on system decision.
-   * This is a simple heuristic for demo purposes.
-   */
-  const computeConfidence = (decision: ApiDecision): number => {
-    switch (decision.status) {
-      case 'resident':
-        return 0.92;
-      case 'nonresident':
-        return 0.85;
-      case 'needs_review':
-      default:
-        return 0.7;
-    }
-  };
-
-  /**
-   * Build a list of key decision factors for the decision card UI.
-   * Uses the student input plus the backend decision status.
-   */
-  const buildKeyFactors = (
-    payload: StudentInputPayload,
-    decision: ApiDecision
-  ): string[] => {
-    const factors: string[] = [];
-
-    if (payload.monthsInCA >= 12) {
-      factors.push('Physical Presence ≥ 12 months');
-    } else if (payload.monthsInCA >= 6) {
-      factors.push('Physical Presence between 6 and 12 months');
-    } else {
-      factors.push('Physical Presence < 6 months');
-    }
-
-    // Count “intent” ties to California
-    const ties = [
-      payload.hasCADriverLicense,
-      payload.registeredToVoteInCA,
-      payload.filesCATaxes
-    ].filter(Boolean).length;
-
-    factors.push(`Intent: ${ties} residency tie(s) found`);
-
-    if (payload.hasCADriverLicense) factors.push('CA Driver License: Found');
-    if (payload.registeredToVoteInCA) factors.push('CA Voter Registration: Found');
-    if (payload.filesCATaxes) factors.push('CA Tax Filing: Found');
-
-    factors.push(`System decision: ${decision.status}`);
-
-    return factors;
-  };
-
   // Ask the next question based on the conversation step
   const askNextQuestion = (next: ConversationStep) => {
     setStep(next);
@@ -209,25 +158,12 @@ export function useChatStateMachine() {
     pushBotText('Got it. Let me evaluate your residency based on these answers...');
 
     try {
-      const res = await fetch(DECIDE_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      const data = await decideResidency(payload);
 
-      if (!res.ok) {
-        // Try to read error message from backend; fallback to HTTP status
-        const data = await res.json().catch(() => ({}));
-        const errorMsg =
-          (data as { error?: string }).error || `Request failed with status ${res.status}`;
-        pushBotText(errorMsg);
-      } else {
-        const data: ApiResponse = await res.json();
-
-        const confidence = computeConfidence(data.decision);
-        const keyFactors = buildKeyFactors(payload, data.decision);
-        pushDecisionCard(data.decision, data.explanations, data.aiExplanation, confidence, keyFactors);
-      }
+      const confidence = computeConfidence(data.decision);
+      const keyFactors = buildKeyFactors(payload, data.decision);
+      pushDecisionCard(data.decision, data.explanations, data.aiExplanation, confidence, keyFactors);
+      
     } catch (err: unknown) {
       console.error(err);
       pushBotText('Server error. Please make sure the backend is running.');
