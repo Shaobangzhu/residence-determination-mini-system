@@ -74,7 +74,7 @@ An interactive **Residency Determination chatbot** for UC Riverside, built with 
 
 ### Backend – Node.js + Express (Render)
 - Routes:
-  - `POST /api/decide`
+  - `POST /api/decision`
   - `GET /api/health`
 - Modules:
   - `/core` — decision logic & explanation engine
