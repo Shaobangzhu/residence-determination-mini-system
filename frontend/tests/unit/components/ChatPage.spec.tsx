@@ -28,17 +28,17 @@ describe('ChatPage', () => {
     render(<ChatPage />);
 
     expect(
-      screen.getByText(/Residency Determination System — UC Riverside/i)
+      screen.getByText(/Residency Determination System Chatbot/i)
     ).toBeInTheDocument();
     expect(screen.getByText(/RDS Assistant · Demo/i)).toBeInTheDocument();
-    expect(screen.getByText('UCR', { exact: true })).toBeInTheDocument();
+    expect(screen.getByText('UC', { exact: true })).toBeInTheDocument();
 
     expect(
       screen.getByText(/Mock hello from RDS Assistant/i)
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(/Demo only · Not official UCR residency guidance/i)
+      screen.getByText(/Demo only · Not official UC residency guidance/i)
     ).toBeInTheDocument();
   });
 
@@ -62,7 +62,7 @@ describe('ChatPage', () => {
   it('clicking Send triggers handleSend from hook', () => {
     const handleSendMock = vi.fn();
 
-    // ⭐ 这一步是真正关键：把 useChatStateMachine “换成” 我们想要的返回值
+    // 把 useChatStateMachine “换成” 返回值
     vi.spyOn(hookModule, 'useChatStateMachine').mockReturnValue({
       messages: [
         {
