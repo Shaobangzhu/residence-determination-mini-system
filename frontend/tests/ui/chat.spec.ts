@@ -4,7 +4,7 @@ test("user can complete a residency flow", async ({ page }) => {
   await page.goto("/");
 
   // Wait for initial welcome messages
-  await expect(page.getByText(/RDS Assistant for UC Riverside/i)).toBeVisible();
+  await expect(page.getByText(/RDS Assistant for University of California/i)).toBeVisible();
 
   // Age
   await page.getByPlaceholder(/Type your answer here…/i).fill("19");
