@@ -35,7 +35,7 @@ export function useChatStateMachine() {
         id: crypto.randomUUID(),
         sender: 'bot',
         kind: 'text',
-        text: "Hello! I'm the RDS Assistant for UC Riverside. I’ll ask a few questions to estimate residency for tuition purposes."
+        text: "Hello! I'm the RDS Assistant for University of California. I'll ask a few questions to estimate residency for tuition purposes."
       },
       {
         id: crypto.randomUUID(),
@@ -133,7 +133,7 @@ export function useChatStateMachine() {
         );
         break;
       case 'askCADriver':
-        pushBotText('Do you have a valid California driver’s license or state ID? (yes / no)');
+        pushBotText('Do you have a valid California driver\'s license or state ID? (yes / no)');
         break;
       case 'askVote':
         pushBotText('Are you registered to vote in California? (yes / no)');

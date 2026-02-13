@@ -20,11 +20,11 @@ export const ChatPage: React.FC = () => {
         <header className="chat-header">
           <div className="chat-title-block">
             <h1 className="chat-title">
-              Residency Determination System — UC Riverside
+              Residency Determination System Chatbot
             </h1>
             <p className="chat-subtitle">RDS Assistant · Demo</p>
           </div>
-          <div className="chat-ucr-logo">UCR</div>
+          <div className="chat-ucr-logo">UC</div>
         </header>
 
         {/* Body */}
@@ -41,7 +41,7 @@ export const ChatPage: React.FC = () => {
 
         {/* Footer */}
         <footer className="chat-footer">
-          Demo only · Not official UCR residency guidance
+          Demo only · Not official UC residency guidance
         </footer>
       </div>
     </div>
