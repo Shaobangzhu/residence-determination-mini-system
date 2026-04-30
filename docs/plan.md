@@ -198,7 +198,7 @@ The estimate assumes part-time work while preparing for interviews. A focused fu
 
 ### Phase 0: Planning and Baseline Audit
 
-Estimated time: 0.5 to 1 day
+Estimated time: 0.5 to 1.5 days
 
 Goals:
 
@@ -206,12 +206,16 @@ Goals:
 - List existing API behavior that must remain compatible.
 - Decide whether to migrate in place or create a fresh NestJS backend folder.
 - Document environment variables and deployment assumptions.
+- Set up GitHub Projects as the project management system for the upgrade.
+- Convert each phase into an Epic and break each Epic into trackable Tasks, Bugs, Chores, and Docs work items.
 
 Deliverables:
 
 - Finalized migration plan.
 - Current API contract snapshot.
 - Initial task list.
+- GitHub Projects workflow with Kanban and Archived boards.
+- Epic-level project structure matching the upgrade phases.
 
 ### Phase 1: NestJS Backend Foundation
 
@@ -622,6 +626,7 @@ Strong interview themes:
 - Turning AI-assisted sketches into maintainable Figma product flows, reusable UI components, and implementation-ready designs.
 - Testing backend logic, API behavior, frontend components, and end-to-end user flows.
 - Building an Allure-powered quality reporting workflow that makes test coverage, failures, and execution history visible.
+- Managing the project through GitHub Projects with phase-level Epics, feature Tasks, Bugs, Chores, Docs, and a visible delivery workflow.
 - Deploying a separated frontend/backend architecture with CI/CD.
 - Using Redis selectively for AI cost control, endpoint protection, and performance.
 - Migrating from Vercel + Render POC deployment to AWS production-style infrastructure.
@@ -630,7 +635,60 @@ Personal positioning:
 
 > Strong full-stack engineer with product sense and SDET depth: able to turn rough ideas into maintainable product design, then build the frontend, backend, AI integration, CI/CD, and automated quality framework needed to deliver the product reliably.
 
-## 10. Product Design Strategy
+## 10. Project Management Strategy
+
+GitHub Projects should be used as the source of truth for planning, tracking, reviewing, and archiving the upgrade work.
+
+Why this matters:
+
+- It makes a solo side project look and behave more like a real engineering project.
+- It shows the ability to break large technical goals into manageable delivery units.
+- It creates a visible audit trail from planning to implementation to review to closure.
+- It helps interviewers understand the scope, sequencing, and completion status of the work.
+
+Project structure:
+
+- Each phase is represented as an Epic.
+- Each Epic contains feature-level Tasks.
+- Work item types include `Task`, `Bug`, `Chore`, and `Docs`.
+- Larger features can be split into smaller implementation, test, documentation, and deployment tasks.
+
+Workflow states:
+
+- `Todo`
+- `In Progress`
+- `Review`
+- `Done`
+- `Closed`
+
+Board setup:
+
+- `Kanban` board shows active delivery states: `Todo`, `In Progress`, `Review`, and `Done`.
+- `Archived` board shows `Closed` items only.
+- `Done` means the work is implemented and reviewable in the active project board.
+- `Closed` means the work is fully completed, no longer active, and moved to the archive view.
+
+Recommended item mapping:
+
+- `Epic`: one upgrade phase, such as NestJS migration, MongoDB migration, Figma productization, or AWS deployment.
+- `Task`: a feature or implementation unit inside an Epic.
+- `Bug`: a defect found during implementation, testing, or demo preparation.
+- `Chore`: setup, dependency, configuration, cleanup, or infrastructure work.
+- `Docs`: README, architecture diagram, API documentation, demo script, or interview notes.
+
+Recommended operating model:
+
+- Start every phase by creating or reviewing its Epic.
+- Move only one or two major Tasks into `In Progress` at a time.
+- Use `Review` for code review, design review, test evidence review, or self-review before completion.
+- Move work to `Done` after implementation and verification.
+- Move completed work to `Closed` when it no longer needs to appear on the active Kanban board.
+
+Interview message:
+
+> I managed this as a real product delivery effort in GitHub Projects. Each phase was an Epic, features were broken into trackable Tasks, and Bugs, Chores, and Docs were handled through a visible workflow from Todo to Review to Done and finally Archived.
+
+## 11. Product Design Strategy
 
 The upgraded project should use Figma as a lightweight product design system before the larger frontend rebuild.
 
@@ -661,7 +719,7 @@ Interview message:
 
 > I used ChatGPT to explore rough ideas, then converted them into a maintainable Figma design system before implementation. This let me work more like a product engineering team: define flows, standardize components, implement consistently, and test the result.
 
-## 11. Quality Engineering Strategy
+## 12. Quality Engineering Strategy
 
 The upgraded project should explicitly demonstrate that quality is part of the system design, not an afterthought.
 
@@ -697,7 +755,7 @@ Interview message:
 
 > I can own the product end to end: frontend, backend, database, AI integration, deployment, CI/CD, and the testing framework that protects release quality. My SDET background helps me think about failure modes, observability, repeatability, and quality gates while still writing production application code.
 
-## 12. Future Improvements
+## 13. Future Improvements
 
 ### GraphQL
 
@@ -723,7 +781,7 @@ Recommended future GraphQL scope:
 - Avoid moving login and simple command-style mutations to GraphQL unless there is a clear product need.
 - Document why REST remains the default API style and why GraphQL is optional.
 
-## 13. Key Risks and Mitigations
+## 14. Key Risks and Mitigations
 
 ### Risk: Migration becomes a full rewrite
 
@@ -746,6 +804,16 @@ Mitigation:
 
 - Add auth only after NestJS and MongoDB are stable.
 - Keep decision submission working without auth during early migration phases if needed.
+
+### Risk: Project management overhead slows delivery
+
+Mitigation:
+
+- Keep GitHub Projects lightweight and delivery-oriented.
+- Use Epics for phases and Tasks for real implementation units.
+- Avoid creating tickets that do not change design, code, tests, docs, or deployment.
+- Archive completed work regularly so the active Kanban board stays readable.
+- Use the board to clarify priorities, not to create bureaucracy.
 
 ### Risk: Figma design phase becomes too large
 
@@ -795,10 +863,11 @@ Mitigation:
   5. Show admin stats.
   6. Briefly explain backend architecture and tests.
 
-## 14. Suggested Definition of Done
+## 15. Suggested Definition of Done
 
 The upgraded project can be considered interview-ready when:
 
+- GitHub Projects tracks the work through phase-level Epics and typed work items.
 - The backend runs on NestJS.
 - MongoDB stores decision records.
 - The frontend can submit and view decision history.
