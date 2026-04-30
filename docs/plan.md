@@ -306,7 +306,47 @@ Notes:
 - Use password hashing with bcrypt or argon2.
 - Keep demo credentials documented for interview demos.
 
-### Phase 5: Frontend Upgrade for Real Workflows
+### Phase 5: UI/UX Design and Productization in Figma
+
+Estimated time: 2 to 4 days
+
+Goals:
+
+- Convert rough ChatGPT-generated sketches and product ideas into editable, maintainable Figma files.
+- Define the user flows before implementing the upgraded frontend.
+- Create a design foundation that can support future features without turning the UI into ad hoc screens.
+- Simulate a more realistic company workflow: product idea -> design exploration -> design system -> frontend implementation -> test coverage.
+- Make the project easier to demo and explain as a serious product, not only a technical prototype.
+
+Recommended Figma scope:
+
+- Information architecture for student and admin workflows.
+- User flow diagrams for login, decision submission, decision history, admin review, and stats dashboard.
+- Low-fidelity wireframes for key pages.
+- High-fidelity mockups for the main flows.
+- Component library for buttons, inputs, status badges, tables, modals/drawers, navigation, and cards.
+- Design tokens for color, typography, spacing, and status states.
+- Responsive layouts for desktop and mobile.
+- Empty, loading, error, unauthorized, and success states.
+
+Deliverables:
+
+- Figma project file.
+- Product flow map.
+- UI component library.
+- Page-level mockups for student and admin workflows.
+- Responsive design variants.
+- Basic design system documentation.
+- Implementation checklist for the frontend upgrade.
+
+Notes:
+
+- This phase should happen before the frontend rebuild so React implementation follows a clear product direction.
+- Figma does not need to become over-designed; the goal is clarity, maintainability, and realistic product workflow.
+- The interview story should be: "I translated AI-assisted rough ideas into a structured product design system before implementation."
+- This phase strengthens future feature expansion because new workflows can reuse existing design tokens and components.
+
+### Phase 6: Frontend Upgrade for Real Workflows
 
 Estimated time: 3 to 5 days
 
@@ -317,6 +357,7 @@ Goals:
 - Add admin dashboard.
 - Add loading, error, empty, and unauthorized states.
 - Keep the chatbot flow as the main student-facing workflow.
+- Implement the upgraded frontend from the Figma design system and page mockups.
 
 Deliverables:
 
@@ -325,13 +366,15 @@ Deliverables:
 - Admin decision table.
 - Decision detail view.
 - Stats summary UI.
+- Frontend components aligned with the Figma component library.
 
 Notes:
 
 - Avoid making the app look like a marketing site.
 - Prioritize operational clarity: filters, tables, status badges, and concise detail panels.
+- Keep implementation consistent with the design tokens and reusable components defined in Phase 5.
 
-### Phase 6: Testing, Quality Reporting, and CI/CD Hardening
+### Phase 7: Testing, Quality Reporting, and CI/CD Hardening
 
 Estimated time: 3 to 4 days
 
@@ -367,7 +410,7 @@ Notes:
 - This phase should highlight the owner's SDET background: the same engineer can build frontend, backend, AI integration, CI/CD, and a maintainable test framework.
 - The interview story should be: "I do not only deliver features; I build the quality system that keeps delivery stable."
 
-### Phase 7: Redis Performance and Reliability Enhancement
+### Phase 8: Redis Performance and Reliability Enhancement
 
 Estimated time: 1 to 2 days
 
@@ -399,7 +442,7 @@ Notes:
 - The best interview story is not "I added Redis"; it is "I used Redis to reduce repeated AI cost and protect an expensive endpoint."
 - Keep the feature small and measurable.
 
-### Phase 8: AWS Production Deployment Migration
+### Phase 9: AWS Production Deployment Migration
 
 Estimated time: 3 to 5 days
 
@@ -476,7 +519,7 @@ Notes:
 - AWS deployment should be added after the application architecture is stable. Do not combine it with the NestJS/MongoDB migration in the same phase.
 - The interview story should focus on why Vercel + Render were useful for quick validation and why AWS was added for production-grade deployment experience.
 
-### Phase 9: Production Polish and Interview Packaging
+### Phase 10: Production Polish and Interview Packaging
 
 Estimated time: 2 to 4 days
 
@@ -514,7 +557,7 @@ Includes:
 
 ### Strong interview-ready version
 
-Estimated time: 2 to 3 weeks part-time
+Estimated time: 2.5 to 3.5 weeks part-time
 
 Includes:
 
@@ -523,6 +566,7 @@ Includes:
 - Decision history APIs.
 - Admin stats APIs.
 - Authentication and authorization.
+- Figma-based UI/UX design and product flow planning.
 - Frontend history/admin workflows.
 - Solid test coverage.
 - Allure Report for visualizing backend, frontend, API, and E2E test results.
@@ -531,11 +575,12 @@ Includes:
 
 ### Portfolio-grade version
 
-Estimated time: 4 to 6 weeks part-time
+Estimated time: 4.5 to 6.5 weeks part-time
 
 Includes:
 
 - Everything in the interview-ready version.
+- Maintainable Figma design system for future feature expansion.
 - Redis caching and rate limiting for selected backend workflows.
 - AWS production deployment with S3, CloudFront, ECS Fargate or Elastic Beanstalk, ECR, CloudWatch, and GitHub Actions.
 - Strong UI polish.
@@ -553,11 +598,12 @@ The recommended path is:
 2. Add MongoDB second.
 3. Add history/admin APIs third.
 4. Add auth fourth.
-5. Upgrade frontend workflows fifth.
-6. Add test framework hardening, Allure reporting, and CI/CD quality gates sixth.
-7. Add Redis caching/rate limiting seventh.
-8. Add AWS production deployment eighth.
-9. Polish documentation and interview packaging last.
+5. Create Figma UI/UX design and productized flows fifth.
+6. Upgrade frontend workflows from the Figma design sixth.
+7. Add test framework hardening, Allure reporting, and CI/CD quality gates seventh.
+8. Add Redis caching/rate limiting eighth.
+9. Add AWS production deployment ninth.
+10. Polish documentation and interview packaging last.
 
 This order keeps the project working after each phase and avoids mixing too many moving parts at once.
 
@@ -573,6 +619,7 @@ Strong interview themes:
 - Keeping deterministic business logic separate from AI-generated explanations.
 - Designing MongoDB schemas around audit-friendly decision records.
 - Building secure role-based workflows for students and admins.
+- Turning AI-assisted sketches into maintainable Figma product flows, reusable UI components, and implementation-ready designs.
 - Testing backend logic, API behavior, frontend components, and end-to-end user flows.
 - Building an Allure-powered quality reporting workflow that makes test coverage, failures, and execution history visible.
 - Deploying a separated frontend/backend architecture with CI/CD.
@@ -581,9 +628,40 @@ Strong interview themes:
 
 Personal positioning:
 
-> Strong full-stack engineer with SDET depth: able to build frontend, backend, AI integration, CI/CD, and the automated quality framework needed to deliver the product reliably.
+> Strong full-stack engineer with product sense and SDET depth: able to turn rough ideas into maintainable product design, then build the frontend, backend, AI integration, CI/CD, and automated quality framework needed to deliver the product reliably.
 
-## 10. Quality Engineering Strategy
+## 10. Product Design Strategy
+
+The upgraded project should use Figma as a lightweight product design system before the larger frontend rebuild.
+
+Why this matters:
+
+- It turns rough AI-assisted sketches into editable design artifacts.
+- It creates a reusable visual and interaction foundation for future features.
+- It makes frontend implementation faster because page structure, states, and components are already decided.
+- It simulates a realistic company workflow where design, implementation, and testing are connected.
+- It improves the project demo because the interviewer can see both product thinking and engineering execution.
+
+Recommended design artifacts:
+
+- Product flow map for student and admin workflows.
+- Figma page structure for wireframes, high-fidelity screens, components, and design tokens.
+- Component library covering inputs, buttons, status badges, tables, cards, dialogs, navigation, and detail panels.
+- Interaction states for loading, empty, error, success, unauthorized, and validation feedback.
+- Responsive variants for desktop and mobile.
+- Frontend implementation checklist derived from the Figma file.
+
+Scope control:
+
+- Do not spend too much time chasing visual perfection before implementation.
+- Focus on flows, component consistency, accessibility, and maintainability.
+- Keep the design system practical enough that it directly maps to React components.
+
+Interview message:
+
+> I used ChatGPT to explore rough ideas, then converted them into a maintainable Figma design system before implementation. This let me work more like a product engineering team: define flows, standardize components, implement consistently, and test the result.
+
+## 11. Quality Engineering Strategy
 
 The upgraded project should explicitly demonstrate that quality is part of the system design, not an afterthought.
 
@@ -619,7 +697,7 @@ Interview message:
 
 > I can own the product end to end: frontend, backend, database, AI integration, deployment, CI/CD, and the testing framework that protects release quality. My SDET background helps me think about failure modes, observability, repeatability, and quality gates while still writing production application code.
 
-## 11. Future Improvements
+## 12. Future Improvements
 
 ### GraphQL
 
@@ -645,7 +723,7 @@ Recommended future GraphQL scope:
 - Avoid moving login and simple command-style mutations to GraphQL unless there is a clear product need.
 - Document why REST remains the default API style and why GraphQL is optional.
 
-## 12. Key Risks and Mitigations
+## 13. Key Risks and Mitigations
 
 ### Risk: Migration becomes a full rewrite
 
@@ -668,6 +746,16 @@ Mitigation:
 
 - Add auth only after NestJS and MongoDB are stable.
 - Keep decision submission working without auth during early migration phases if needed.
+
+### Risk: Figma design phase becomes too large
+
+Mitigation:
+
+- Treat Figma as an implementation accelerator, not a separate art project.
+- Prioritize user flows, reusable components, states, and responsive structure.
+- Time-box the initial design phase to 2 to 4 days.
+- Move nice-to-have visual polish to the final packaging phase.
+- Keep every Figma component traceable to a planned React component or page.
 
 ### Risk: Redis adds infrastructure complexity without enough value
 
@@ -707,7 +795,7 @@ Mitigation:
   5. Show admin stats.
   6. Briefly explain backend architecture and tests.
 
-## Suggested Definition of Done
+## 14. Suggested Definition of Done
 
 The upgraded project can be considered interview-ready when:
 
@@ -716,6 +804,7 @@ The upgraded project can be considered interview-ready when:
 - The frontend can submit and view decision history.
 - At least one admin workflow exists.
 - Auth and role-based access are working.
+- Figma design artifacts exist for the main product flows, reusable components, and responsive states.
 - Redis is used for a small, justified performance or reliability feature if targeting the portfolio-grade version.
 - AWS deployment is documented and working if targeting the portfolio-grade version.
 - CI passes backend, frontend, and E2E tests.

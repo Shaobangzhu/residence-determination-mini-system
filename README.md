@@ -1,12 +1,13 @@
 # Residency Determination Mini System (RDS Assistant)
 
-An interactive **Residency Determination chatbot** for University of California, built with a modern **full‑stack TypeScript** architecture.  This project simulates a realistic workflow used in Student Information Systems, combining automated residency logic, AI‑generated explanations, SQLite data persistence, and a production‑grade CI/CD pipeline.
+An interactive **Residency Determination chatbot** for University of California, built with a modern **full‑stack TypeScript** architecture. This project simulates a realistic workflow used in Student Information Systems, combining automated residency logic, AI‑generated explanations, SQLite data persistence, and a production‑grade CI/CD pipeline.
 
 ## 🌟 Demo Preview
 
 [Chatbot Interaction **Live Demo**](https://residence-determination-mini-sy-git-c10d0f-chaoran-lus-projects.vercel.app/)
 
 ---
+
 <div align="center">
   <table>
     <tr>
@@ -33,11 +34,12 @@ An interactive **Residency Determination chatbot** for University of California,
 </div>
 
 ## 📁 Directory Structure
+
 ```
 .
 ├── .github/workflows
 │ └── cicd.yml # GitHub Push/PR → CI Tests → (main only) → Deploy Backend → Deploy Frontend
-| 
+|
 ├── backend/
 │   ├── src/
 │   │   ├── ai.ts               # GPT‑4o‑mini integration
@@ -66,13 +68,15 @@ An interactive **Residency Determination chatbot** for University of California,
 ## 🔧 Tech Stack
 
 ### Frontend – React + Vite (Vercel)
-- Custom chatbot UI  
-- State machine handled by `useChatStateMachine` hook  
-- DecisionCard renders system + AI interpretations  
+
+- Custom chatbot UI
+- State machine handled by `useChatStateMachine` hook
+- DecisionCard renders system + AI interpretations
 - Environment variables:
   - `VITE_API_BASE_URL` → backend URL
 
 ### Backend – Node.js + Express (Render)
+
 - Routes:
   - `POST /api/decision`
   - `GET /api/health`
@@ -83,13 +87,14 @@ An interactive **Residency Determination chatbot** for University of California,
   - `db.ts` — DB bootstrap + migrations
 
 ### Database – SQLite
+
 - Lightweight, perfect for demos + small datasets
 - Decision history stored for audit + UI replay + future ML
 
 ### **CI/CD Pipeline**
 
 <div align="center">
-  <img src="docs/workflow.png" width="950" alt="System architecture and CI/CD workflow diagram"/>
+  <img src="docs/cicd.workflow.png" width="950" alt="System architecture and CI/CD workflow diagram"/>
   <br/>
   <sub><i>Deployment architecture + CI/CD workflow</i></sub>
 </div>
@@ -123,10 +128,12 @@ All PRs must pass these tests before merging.
 When changes are pushed to `main` and **all tests pass**, the pipeline triggers automated deployments:
 
 ##### **Backend Deployment (Render)**
+
 - Uses Render’s Deploy Hook to build and release a new version of the Node.js/Express API.
 - Provides a stable long-running backend service for `/api/decision`, `/health`, and `/api/health`.
 
 ##### **Frontend Deployment (Vercel)**
+
 - Uses the Vercel CLI to:
   1. Pull production environment variables
   2. Build the optimized React/Vite SPA
@@ -138,10 +145,10 @@ This ensures the frontend always targets the correct backend via `VITE_API_BASE_
 
 #### 🔗 This automated pipeline guarantees:
 
-- Verified code before deployment  
-- Zero manual steps  
-- Fast and consistent releases  
-- Clear separation between frontend and backend environments  
+- Verified code before deployment
+- Zero manual steps
+- Fast and consistent releases
+- Clear separation between frontend and backend environments
 
 ## 🚀 Deployment Architecture
 
