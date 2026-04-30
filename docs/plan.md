@@ -356,7 +356,39 @@ Notes:
 - For CI, use either `mongodb-memory-server` or a GitHub Actions MongoDB service.
 - Mock OpenAI in automated tests.
 
-### Phase 7: Production Polish and Interview Packaging
+### Phase 7: Redis Performance and Reliability Enhancement
+
+Estimated time: 1 to 2 days
+
+Goals:
+
+- Add Redis only after the main NestJS, MongoDB, auth, and admin workflows are stable.
+- Use Redis for one or two concrete backend concerns instead of adding it as a decorative technology.
+- Improve API performance, cost control, and abuse protection.
+
+Recommended Redis use cases:
+
+- Cache AI explanations by normalized decision input and decision result.
+- Add TTL-based caching, such as 24 hours, to avoid repeated OpenAI calls for identical evaluations.
+- Add rate limiting for high-cost endpoints such as `POST /api/decision`.
+- Optionally cache admin dashboard stats if aggregation becomes expensive.
+
+Deliverables:
+
+- Redis connection module.
+- AI explanation cache service.
+- Cache key design documented.
+- TTL behavior documented.
+- Rate limit configuration for decision submission.
+- Tests for cache hit, cache miss, and fallback behavior.
+
+Notes:
+
+- Redis should not be introduced before MongoDB and auth are stable.
+- The best interview story is not "I added Redis"; it is "I used Redis to reduce repeated AI cost and protect an expensive endpoint."
+- Keep the feature small and measurable.
+
+### Phase 8: Production Polish and Interview Packaging
 
 Estimated time: 2 to 4 days
 
@@ -414,6 +446,7 @@ Estimated time: 3 to 5 weeks part-time
 Includes:
 
 - Everything in the interview-ready version.
+- Redis caching and rate limiting for selected backend workflows.
 - Strong UI polish.
 - Better observability/logging.
 - More realistic residency domain fields.
@@ -429,7 +462,9 @@ The recommended path is:
 3. Add history/admin APIs third.
 4. Add auth fourth.
 5. Upgrade frontend workflows fifth.
-6. Harden tests and documentation last.
+6. Harden tests and CI/CD sixth.
+7. Add Redis caching/rate limiting seventh.
+8. Polish documentation and interview packaging last.
 
 This order keeps the project working after each phase and avoids mixing too many moving parts at once.
 
@@ -447,8 +482,35 @@ Strong interview themes:
 - Building secure role-based workflows for students and admins.
 - Testing backend logic, API behavior, frontend components, and end-to-end user flows.
 - Deploying a separated frontend/backend architecture with CI/CD.
+- Using Redis selectively for AI cost control, endpoint protection, and performance.
 
-## 10. Key Risks and Mitigations
+## 10. Future Improvements
+
+### GraphQL
+
+GraphQL is not recommended for the main migration because the current API shape is a good fit for REST:
+
+- Submit a decision.
+- View decision history.
+- View one decision record.
+- View admin stats.
+- Authenticate users.
+
+GraphQL can be considered later if the product grows into more complex data access patterns, such as:
+
+- Multiple clients, such as web, mobile, and advisor portal.
+- Flexible admin dashboards that query nested user, decision, evidence, and advisor data.
+- Complex filtering and partial-field selection requirements.
+- Aggregating several backend data sources behind one API.
+
+Recommended future GraphQL scope:
+
+- Add a separate `/graphql` endpoint while keeping REST APIs stable.
+- Start with read-heavy queries for decision records, users, and dashboard stats.
+- Avoid moving login and simple command-style mutations to GraphQL unless there is a clear product need.
+- Document why REST remains the default API style and why GraphQL is optional.
+
+## 11. Key Risks and Mitigations
 
 ### Risk: Migration becomes a full rewrite
 
@@ -472,6 +534,22 @@ Mitigation:
 - Add auth only after NestJS and MongoDB are stable.
 - Keep decision submission working without auth during early migration phases if needed.
 
+### Risk: Redis adds infrastructure complexity without enough value
+
+Mitigation:
+
+- Add Redis only for concrete use cases such as AI explanation caching and rate limiting.
+- Keep the first Redis feature small and easy to explain.
+- Make the app continue working if Redis is temporarily unavailable.
+
+### Risk: GraphQL becomes resume-driven architecture
+
+Mitigation:
+
+- Keep GraphQL in Future Improvements until REST becomes limiting.
+- Introduce it only for read-heavy, nested, or multi-client query needs.
+- Avoid replacing stable REST endpoints without a clear reason.
+
 ### Risk: Project becomes too large for interview demos
 
 Mitigation:
@@ -484,7 +562,7 @@ Mitigation:
   5. Show admin stats.
   6. Briefly explain backend architecture and tests.
 
-## 11. Suggested Definition of Done
+## 12. Suggested Definition of Done
 
 The upgraded project can be considered interview-ready when:
 
@@ -493,6 +571,7 @@ The upgraded project can be considered interview-ready when:
 - The frontend can submit and view decision history.
 - At least one admin workflow exists.
 - Auth and role-based access are working.
+- Redis is used for a small, justified performance or reliability feature if targeting the portfolio-grade version.
 - CI passes backend, frontend, and E2E tests.
 - README clearly explains architecture, setup, testing, deployment, and tradeoffs.
 - You can demo the project in under 5 minutes and explain the architecture in under 2 minutes.
