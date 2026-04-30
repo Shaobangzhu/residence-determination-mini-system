@@ -46,7 +46,7 @@ Runtime: Node.js
 API style: REST
 Auth: JWT-based authentication and role-based access control
 Testing: Unit, integration, API, and E2E tests
-Deployment: Vercel frontend + Render backend + MongoDB Atlas
+Deployment: Vercel frontend + Render backend + MongoDB Atlas for POC; AWS for production-grade portfolio deployment
 CI/CD: GitHub Actions
 ```
 
@@ -388,7 +388,84 @@ Notes:
 - The best interview story is not "I added Redis"; it is "I used Redis to reduce repeated AI cost and protect an expensive endpoint."
 - Keep the feature small and measurable.
 
-### Phase 8: Production Polish and Interview Packaging
+### Phase 8: AWS Production Deployment Migration
+
+Estimated time: 3 to 5 days
+
+Goals:
+
+- Keep Vercel + Render as the fast proof-of-concept deployment path.
+- Add an AWS deployment path that is more interview-grade and closer to production infrastructure.
+- Show that the project can be deployed beyond platform-as-a-service defaults.
+- Document the tradeoffs between POC deployment and cloud production deployment.
+
+Recommended AWS target architecture:
+
+```text
+Frontend:
+  React build -> S3 static website bucket -> CloudFront CDN
+
+Backend:
+  NestJS API -> Docker image -> ECS Fargate service
+  Alternative simpler path: Elastic Beanstalk Node.js environment
+
+Database:
+  MongoDB Atlas
+  Alternative AWS-native option: Amazon DocumentDB, only if compatibility tradeoffs are acceptable
+
+Secrets/config:
+  AWS Systems Manager Parameter Store or AWS Secrets Manager
+
+Networking:
+  VPC
+  Public Application Load Balancer
+  Private ECS tasks where possible
+  Security groups for controlled inbound traffic
+
+CI/CD:
+  GitHub Actions -> build/test -> Docker image -> ECR -> ECS deploy
+  GitHub Actions -> frontend build -> S3 sync -> CloudFront invalidation
+
+Observability:
+  CloudWatch logs
+  Health checks
+  Basic alarms for backend availability
+```
+
+Recommended implementation path:
+
+1. Containerize the NestJS backend with a production Dockerfile.
+2. Push backend images to Amazon ECR.
+3. Deploy the backend to ECS Fargate behind an Application Load Balancer.
+4. Store `MONGODB_URI`, `OPENAI_API_KEY`, JWT secrets, and Redis config in Parameter Store or Secrets Manager.
+5. Build the React frontend and deploy static assets to S3.
+6. Put CloudFront in front of the S3 frontend.
+7. Configure frontend environment variables to call the AWS backend URL.
+8. Add CloudWatch logging for the backend service.
+9. Update GitHub Actions to support AWS deployment.
+10. Document rollback steps and environment setup.
+
+Deliverables:
+
+- Backend Dockerfile.
+- ECR repository.
+- ECS Fargate service or Elastic Beanstalk environment.
+- Application Load Balancer endpoint for the backend.
+- S3 bucket for frontend hosting.
+- CloudFront distribution.
+- GitHub Actions deployment workflow for AWS.
+- AWS environment variable and secrets documentation.
+- Updated architecture diagram showing both POC and AWS deployment paths.
+
+Notes:
+
+- ECS Fargate is more impressive and closer to real production infrastructure.
+- Elastic Beanstalk is simpler and still valid if time is limited.
+- MongoDB Atlas can remain the database provider because it is common in MERN projects and avoids DocumentDB compatibility surprises.
+- AWS deployment should be added after the application architecture is stable. Do not combine it with the NestJS/MongoDB migration in the same phase.
+- The interview story should focus on why Vercel + Render were useful for quick validation and why AWS was added for production-grade deployment experience.
+
+### Phase 9: Production Polish and Interview Packaging
 
 Estimated time: 2 to 4 days
 
@@ -438,15 +515,17 @@ Includes:
 - Frontend history/admin workflows.
 - Solid test coverage.
 - Updated documentation.
+- Vercel + Render can still be used as the fast demo deployment.
 
 ### Portfolio-grade version
 
-Estimated time: 3 to 5 weeks part-time
+Estimated time: 4 to 6 weeks part-time
 
 Includes:
 
 - Everything in the interview-ready version.
 - Redis caching and rate limiting for selected backend workflows.
+- AWS production deployment with S3, CloudFront, ECS Fargate or Elastic Beanstalk, ECR, CloudWatch, and GitHub Actions.
 - Strong UI polish.
 - Better observability/logging.
 - More realistic residency domain fields.
@@ -464,7 +543,8 @@ The recommended path is:
 5. Upgrade frontend workflows fifth.
 6. Harden tests and CI/CD sixth.
 7. Add Redis caching/rate limiting seventh.
-8. Polish documentation and interview packaging last.
+8. Add AWS production deployment eighth.
+9. Polish documentation and interview packaging last.
 
 This order keeps the project working after each phase and avoids mixing too many moving parts at once.
 
@@ -483,6 +563,7 @@ Strong interview themes:
 - Testing backend logic, API behavior, frontend components, and end-to-end user flows.
 - Deploying a separated frontend/backend architecture with CI/CD.
 - Using Redis selectively for AI cost control, endpoint protection, and performance.
+- Migrating from Vercel + Render POC deployment to AWS production-style infrastructure.
 
 ## 10. Future Improvements
 
@@ -542,6 +623,16 @@ Mitigation:
 - Keep the first Redis feature small and easy to explain.
 - Make the app continue working if Redis is temporarily unavailable.
 
+### Risk: AWS deployment becomes too large and slows product work
+
+Mitigation:
+
+- Keep Vercel + Render as the working POC deployment while AWS is being added.
+- Choose Elastic Beanstalk if interview timing is tight.
+- Choose ECS Fargate if the goal is a stronger cloud infrastructure story.
+- Deploy the stable app to AWS only after NestJS, MongoDB, auth, and tests are already working.
+- Document AWS architecture and tradeoffs even if the first AWS deployment is intentionally simple.
+
 ### Risk: GraphQL becomes resume-driven architecture
 
 Mitigation:
@@ -572,6 +663,7 @@ The upgraded project can be considered interview-ready when:
 - At least one admin workflow exists.
 - Auth and role-based access are working.
 - Redis is used for a small, justified performance or reliability feature if targeting the portfolio-grade version.
+- AWS deployment is documented and working if targeting the portfolio-grade version.
 - CI passes backend, frontend, and E2E tests.
 - README clearly explains architecture, setup, testing, deployment, and tradeoffs.
 - You can demo the project in under 5 minutes and explain the architecture in under 2 minutes.
