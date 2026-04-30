@@ -331,9 +331,9 @@ Notes:
 - Avoid making the app look like a marketing site.
 - Prioritize operational clarity: filters, tables, status badges, and concise detail panels.
 
-### Phase 6: Testing and CI/CD Hardening
+### Phase 6: Testing, Quality Reporting, and CI/CD Hardening
 
-Estimated time: 2 to 3 days
+Estimated time: 3 to 4 days
 
 Goals:
 
@@ -342,6 +342,9 @@ Goals:
 - Add API/e2e tests for auth and decision history.
 - Update Playwright tests for the new authenticated flows.
 - Update GitHub Actions for MongoDB test support.
+- Add Allure Report to visualize the testing workflow and quality signals.
+- Make the test framework an explicit portfolio strength, not just a hidden CI detail.
+- Show that the project is supported by an industry-style quality gate across backend, frontend, API, and E2E layers.
 
 Deliverables:
 
@@ -349,12 +352,20 @@ Deliverables:
 - API integration tests.
 - Frontend component tests.
 - Playwright E2E tests.
+- Allure Report configuration for relevant test layers.
+- Allure artifacts generated in CI.
+- GitHub Actions workflow step to publish or upload Allure results.
+- Test result history if using GitHub Pages or a similar static report target.
+- Test categories or labels that separate backend unit, API integration, frontend unit, and E2E coverage.
 - CI passing with MongoDB support.
 
 Notes:
 
 - For CI, use either `mongodb-memory-server` or a GitHub Actions MongoDB service.
 - Mock OpenAI in automated tests.
+- Allure should make the quality workflow visible: what was tested, what failed, how long it took, and which layer failed.
+- This phase should highlight the owner's SDET background: the same engineer can build frontend, backend, AI integration, CI/CD, and a maintainable test framework.
+- The interview story should be: "I do not only deliver features; I build the quality system that keeps delivery stable."
 
 ### Phase 7: Redis Performance and Reliability Enhancement
 
@@ -514,6 +525,7 @@ Includes:
 - Authentication and authorization.
 - Frontend history/admin workflows.
 - Solid test coverage.
+- Allure Report for visualizing backend, frontend, API, and E2E test results.
 - Updated documentation.
 - Vercel + Render can still be used as the fast demo deployment.
 
@@ -527,6 +539,7 @@ Includes:
 - Redis caching and rate limiting for selected backend workflows.
 - AWS production deployment with S3, CloudFront, ECS Fargate or Elastic Beanstalk, ECR, CloudWatch, and GitHub Actions.
 - Strong UI polish.
+- Mature quality dashboard with Allure history and CI artifacts.
 - Better observability/logging.
 - More realistic residency domain fields.
 - File/document metadata workflow.
@@ -541,7 +554,7 @@ The recommended path is:
 3. Add history/admin APIs third.
 4. Add auth fourth.
 5. Upgrade frontend workflows fifth.
-6. Harden tests and CI/CD sixth.
+6. Add test framework hardening, Allure reporting, and CI/CD quality gates sixth.
 7. Add Redis caching/rate limiting seventh.
 8. Add AWS production deployment eighth.
 9. Polish documentation and interview packaging last.
@@ -561,11 +574,52 @@ Strong interview themes:
 - Designing MongoDB schemas around audit-friendly decision records.
 - Building secure role-based workflows for students and admins.
 - Testing backend logic, API behavior, frontend components, and end-to-end user flows.
+- Building an Allure-powered quality reporting workflow that makes test coverage, failures, and execution history visible.
 - Deploying a separated frontend/backend architecture with CI/CD.
 - Using Redis selectively for AI cost control, endpoint protection, and performance.
 - Migrating from Vercel + Render POC deployment to AWS production-style infrastructure.
 
-## 10. Future Improvements
+Personal positioning:
+
+> Strong full-stack engineer with SDET depth: able to build frontend, backend, AI integration, CI/CD, and the automated quality framework needed to deliver the product reliably.
+
+## 10. Quality Engineering Strategy
+
+The upgraded project should explicitly demonstrate that quality is part of the system design, not an afterthought.
+
+Recommended quality layers:
+
+- Backend unit tests for deterministic residency rules and service orchestration.
+- Backend API/integration tests for validation, auth, persistence, and error handling.
+- Frontend unit/component tests for UI state, form behavior, and decision rendering.
+- Playwright E2E tests for complete user workflows.
+- Mocked OpenAI tests to keep CI deterministic and cost-controlled.
+- MongoDB test isolation through `mongodb-memory-server` or a dedicated test database.
+- Allure Report to visualize test execution, failure categories, duration, and historical trends.
+
+Recommended Allure report structure:
+
+- `backend-unit`
+- `backend-api`
+- `frontend-unit`
+- `frontend-e2e`
+- `auth-flow`
+- `decision-flow`
+- `admin-flow`
+
+CI quality gate expectations:
+
+- Tests run automatically on every pull request.
+- Allure results are uploaded as CI artifacts.
+- Optional GitHub Pages publishing keeps historical Allure reports available.
+- Failed tests should clearly identify the failing layer and workflow.
+- OpenAI calls are mocked in CI so test results remain stable.
+
+Interview message:
+
+> I can own the product end to end: frontend, backend, database, AI integration, deployment, CI/CD, and the testing framework that protects release quality. My SDET background helps me think about failure modes, observability, repeatability, and quality gates while still writing production application code.
+
+## 11. Future Improvements
 
 ### GraphQL
 
@@ -591,7 +645,7 @@ Recommended future GraphQL scope:
 - Avoid moving login and simple command-style mutations to GraphQL unless there is a clear product need.
 - Document why REST remains the default API style and why GraphQL is optional.
 
-## 11. Key Risks and Mitigations
+## 12. Key Risks and Mitigations
 
 ### Risk: Migration becomes a full rewrite
 
@@ -653,7 +707,7 @@ Mitigation:
   5. Show admin stats.
   6. Briefly explain backend architecture and tests.
 
-## 12. Suggested Definition of Done
+## Suggested Definition of Done
 
 The upgraded project can be considered interview-ready when:
 
@@ -665,5 +719,6 @@ The upgraded project can be considered interview-ready when:
 - Redis is used for a small, justified performance or reliability feature if targeting the portfolio-grade version.
 - AWS deployment is documented and working if targeting the portfolio-grade version.
 - CI passes backend, frontend, and E2E tests.
+- Allure Report is generated from CI so the testing workflow is visible and demoable.
 - README clearly explains architecture, setup, testing, deployment, and tradeoffs.
 - You can demo the project in under 5 minutes and explain the architecture in under 2 minutes.
