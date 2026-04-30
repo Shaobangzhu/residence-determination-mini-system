@@ -208,6 +208,7 @@ Goals:
 - Document environment variables and deployment assumptions.
 - Set up GitHub Projects as the project management system for the upgrade.
 - Convert each phase into an Epic and break each Epic into trackable Tasks, Bugs, Chores, and Docs work items.
+- Set up the GitHub Wiki as the long-form project knowledge base.
 
 Deliverables:
 
@@ -216,6 +217,7 @@ Deliverables:
 - Initial task list.
 - GitHub Projects workflow with Kanban and Archived boards.
 - Epic-level project structure matching the upgrade phases.
+- Initial GitHub Wiki home page and documentation outline.
 
 ### Phase 1: NestJS Backend Foundation
 
@@ -535,6 +537,7 @@ Goals:
 - Add deployment guide.
 - Add tradeoff notes explaining Express/SQLite to NestJS/MongoDB migration.
 - Prepare interview talking points.
+- Polish GitHub Wiki pages so the project has a clear public knowledge base.
 
 Deliverables:
 
@@ -544,6 +547,7 @@ Deliverables:
 - API contract table.
 - Demo script.
 - Interview talking-points document.
+- Published GitHub Wiki pages for architecture, setup, roadmap, testing, deployment, and demo guidance.
 
 ## 7. Overall Timeline
 
@@ -627,6 +631,7 @@ Strong interview themes:
 - Testing backend logic, API behavior, frontend components, and end-to-end user flows.
 - Building an Allure-powered quality reporting workflow that makes test coverage, failures, and execution history visible.
 - Managing the project through GitHub Projects with phase-level Epics, feature Tasks, Bugs, Chores, Docs, and a visible delivery workflow.
+- Maintaining a GitHub Wiki as a searchable project knowledge base for architecture, roadmap, testing, deployment, and interview demos.
 - Deploying a separated frontend/backend architecture with CI/CD.
 - Using Redis selectively for AI cost control, endpoint protection, and performance.
 - Migrating from Vercel + Render POC deployment to AWS production-style infrastructure.
@@ -688,7 +693,51 @@ Interview message:
 
 > I managed this as a real product delivery effort in GitHub Projects. Each phase was an Epic, features were broken into trackable Tasks, and Bugs, Chores, and Docs were handled through a visible workflow from Todo to Review to Done and finally Archived.
 
-## 11. Product Design Strategy
+## 11. GitHub Wiki Documentation Strategy
+
+The GitHub Wiki should be used as the project's long-form documentation hub. It should help interviewers, future collaborators, and the project owner understand the product, architecture, delivery process, and quality system without reading every source file first.
+
+Recommended Wiki pages:
+
+- `Home`: overview, live demo links, repository links, current project status, and navigation to the most important pages.
+- `Product Vision`: what the residency determination assistant does, target users, core workflows, and non-official-disclaimer positioning.
+- `Roadmap`: phase-based upgrade plan from Express/SQLite to NestJS/MongoDB, Redis, AWS, and future improvements.
+- `Architecture Overview`: frontend, backend, database, AI integration, CI/CD, and deployment diagrams.
+- `Backend Architecture`: NestJS modules, controllers, services, DTOs, guards, schemas, and error handling strategy.
+- `Frontend Architecture`: React structure, state management, API layer, component organization, and design-system alignment.
+- `Data Model`: MongoDB schemas, indexes, relationships, audit history, and sample documents.
+- `API Reference`: REST endpoints, request/response examples, auth requirements, error responses, and status codes.
+- `Auth and Roles`: student/admin roles, JWT flow, protected endpoints, and security assumptions.
+- `AI Integration`: OpenAI usage, prompt strategy, fallback behavior, mocked CI behavior, and cost-control notes.
+- `Testing Strategy`: backend unit, API integration, frontend unit, Playwright E2E, Allure Report, test data, and quality gates.
+- `CI/CD Workflow`: GitHub Actions pipeline, test stages, artifacts, Allure publishing, and deployment triggers.
+- `Deployment Guide`: Vercel + Render POC deployment and AWS production-style deployment with S3, CloudFront, ECR, ECS, ALB, and CloudWatch.
+- `Project Management`: GitHub Projects setup, Epic/Task/Bug/Chore/Docs types, Kanban board, Archived board, and workflow rules.
+- `Figma Design System`: Figma file links, user flows, design tokens, component library, responsive rules, and implementation checklist.
+- `Demo Script`: 5-minute interview demo path, talking points, and backup screenshots.
+- `Decision Records`: architecture decision records explaining major tradeoffs, such as NestJS over Express, MongoDB over SQLite, REST over GraphQL, and AWS over PaaS-only deployment.
+- `Known Limitations`: what is intentionally simplified, what is not official residency advice, and what would be improved in a production university system.
+- `Future Improvements`: GraphQL, document upload, observability, analytics, advisor workflow, and more realistic residency rules.
+
+Recommended Wiki boundaries:
+
+- README should stay short and act as the project landing page.
+- `docs/plan.md` should remain the detailed upgrade plan.
+- GitHub Projects should track execution status.
+- Wiki should explain the system, decisions, operations, and demo story in a browsable format.
+
+Recommended Wiki operating model:
+
+- Add or update Wiki pages at the end of each phase.
+- Link completed Epics from GitHub Projects to relevant Wiki pages.
+- Keep screenshots, architecture diagrams, Allure report links, and Figma links discoverable from the Wiki.
+- Use the Wiki as the interviewer's guided map through the project.
+
+Interview message:
+
+> I used GitHub Wiki as the project's knowledge base, separating quick-start README content from deeper architecture, testing, deployment, design, and project-management documentation. This makes the project easier to review like a real engineering product.
+
+## 12. Product Design Strategy
 
 The upgraded project should use Figma as a lightweight product design system before the larger frontend rebuild.
 
@@ -719,7 +768,7 @@ Interview message:
 
 > I used ChatGPT to explore rough ideas, then converted them into a maintainable Figma design system before implementation. This let me work more like a product engineering team: define flows, standardize components, implement consistently, and test the result.
 
-## 12. Quality Engineering Strategy
+## 13. Quality Engineering Strategy
 
 The upgraded project should explicitly demonstrate that quality is part of the system design, not an afterthought.
 
@@ -755,7 +804,7 @@ Interview message:
 
 > I can own the product end to end: frontend, backend, database, AI integration, deployment, CI/CD, and the testing framework that protects release quality. My SDET background helps me think about failure modes, observability, repeatability, and quality gates while still writing production application code.
 
-## 13. Future Improvements
+## 14. Future Improvements
 
 ### GraphQL
 
@@ -781,7 +830,7 @@ Recommended future GraphQL scope:
 - Avoid moving login and simple command-style mutations to GraphQL unless there is a clear product need.
 - Document why REST remains the default API style and why GraphQL is optional.
 
-## 14. Key Risks and Mitigations
+## 15. Key Risks and Mitigations
 
 ### Risk: Migration becomes a full rewrite
 
@@ -814,6 +863,16 @@ Mitigation:
 - Avoid creating tickets that do not change design, code, tests, docs, or deployment.
 - Archive completed work regularly so the active Kanban board stays readable.
 - Use the board to clarify priorities, not to create bureaucracy.
+
+### Risk: Wiki becomes stale or duplicates README/docs
+
+Mitigation:
+
+- Use README as the short landing page.
+- Use `docs/plan.md` as the detailed upgrade plan.
+- Use GitHub Projects for execution tracking.
+- Use Wiki for long-form architecture, operations, testing, deployment, and demo documentation.
+- Update Wiki pages at phase boundaries instead of after every tiny code change.
 
 ### Risk: Figma design phase becomes too large
 
@@ -863,11 +922,12 @@ Mitigation:
   5. Show admin stats.
   6. Briefly explain backend architecture and tests.
 
-## 15. Suggested Definition of Done
+## 16. Suggested Definition of Done
 
 The upgraded project can be considered interview-ready when:
 
 - GitHub Projects tracks the work through phase-level Epics and typed work items.
+- GitHub Wiki documents the system architecture, roadmap, testing strategy, deployment guide, and demo flow.
 - The backend runs on NestJS.
 - MongoDB stores decision records.
 - The frontend can submit and view decision history.
