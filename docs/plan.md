@@ -549,6 +549,219 @@ Deliverables:
 - Interview talking-points document.
 - Published GitHub Wiki pages for architecture, setup, roadmap, testing, deployment, and demo guidance.
 
+### Vibe Coding Execution Roadmap
+
+This roadmap turns the larger upgrade plan and `docs/rough.chatgpt.ui.design.png` into a GitHub Projects-friendly execution track. The goal is to keep the project runnable after each milestone while steadily evolving it from a small chatbot prototype into a complete student/admin MERN-style product.
+
+This track should be used as the day-to-day implementation plan. The broader phase plan above remains the long-term architecture direction, especially for NestJS, Redis, AWS, and interview packaging.
+
+Working principles:
+
+- Build in vertical slices that are visible, testable, and demoable.
+- Keep the current `POST /api/decision` contract stable until the new workflows are ready.
+- Avoid combining database migration, auth, admin analytics, and frontend redesign in one large change.
+- Move one or two major GitHub Project items into `In Progress` at a time.
+- Treat each milestone as complete only after code, tests, and docs are updated.
+
+Recommended GitHub Project:
+
+- Project name: `RDS Assistant Product Upgrade`
+- Board views:
+  - `Kanban`: active delivery work.
+  - `Roadmap`: milestones grouped by product phase.
+  - `Archive`: closed or no-longer-active work.
+- Fields:
+  - `Status`: `Todo`, `In Progress`, `Review`, `Done`, `Closed`
+  - `Type`: `Epic`, `Task`, `Bug`, `Chore`, `Docs`, `Design`, `Test`
+  - `Area`: `Backend`, `Frontend`, `Database`, `Auth`, `Admin`, `CI/CD`, `Docs`, `Design`
+  - `Priority`: `P0`, `P1`, `P2`
+  - `Milestone`: `M0` through `M7`
+  - `Size`: `S`, `M`, `L`
+
+#### M0: Baseline Lock
+
+Goal:
+
+- Freeze the current behavior so the upgrade has a stable reference point.
+
+Recommended GitHub Project items:
+
+- `Epic`: Baseline audit and migration guardrails
+- `Task`: Snapshot current `POST /api/decision` request and response contract
+- `Task`: Document current frontend chatbot state machine
+- `Task`: Identify SQLite-specific files, dependencies, and deployment assumptions
+- `Test`: Run and record current backend, frontend, and Playwright test status
+- `Docs`: Add migration notes from Express/SQLite prototype to MERN upgrade
+
+Definition of done:
+
+- The current API contract is documented.
+- Current test commands and expected results are known.
+- SQLite-specific replacement points are listed before implementation begins.
+
+#### M1: MongoDB Migration
+
+Goal:
+
+- Replace SQLite persistence with MongoDB/Mongoose while preserving the existing user-facing decision flow.
+
+Recommended GitHub Project items:
+
+- `Epic`: MongoDB persistence migration
+- `Chore`: Add Mongoose dependency and MongoDB configuration
+- `Task`: Create `DecisionRecord` Mongoose schema
+- `Task`: Replace SQLite decision persistence with MongoDB persistence
+- `Task`: Convert decision persistence flow to async
+- `Test`: Add MongoDB persistence tests
+- `Chore`: Update GitHub Actions for MongoDB test support
+- `Docs`: Replace SQLite setup notes with MongoDB Atlas setup notes
+
+Definition of done:
+
+- `POST /api/decision` returns the same response shape as before.
+- Decision records are saved to MongoDB.
+- CI can run backend tests without depending on a production database.
+- `better-sqlite3` can be removed after verification.
+
+#### M2: Auth Foundation
+
+Goal:
+
+- Add the login and role foundation required by the student and admin designs.
+
+Recommended GitHub Project items:
+
+- `Epic`: JWT authentication and role-based access
+- `Task`: Create `User` data model
+- `Task`: Add login endpoint
+- `Task`: Add optional registration or seeded demo users
+- `Task`: Add JWT authentication middleware or guards
+- `Task`: Add `student` and `admin` roles
+- `Test`: Add auth API tests
+- `Docs`: Document demo credentials and auth flow
+
+Definition of done:
+
+- Student and admin users can authenticate.
+- Backend routes can identify the current user and role.
+- Demo credentials are documented for local and interview use.
+
+#### M3: Student Chat Experience
+
+Goal:
+
+- Implement the student-facing experience shown in the rough design: authenticated chat shell, decision card, and chat history.
+
+Recommended GitHub Project items:
+
+- `Epic`: Student residency assistant experience
+- `Design`: Convert rough student chat screen into frontend component checklist
+- `Task`: Build login screen based on the design direction
+- `Task`: Build authenticated student app shell with sidebar
+- `Task`: Add new chat and chat history UI
+- `Task`: Associate saved decision records with the logged-in student
+- `Task`: Render decision card with status, key factors, and disclaimer
+- `Test`: Add Playwright student login and decision flow
+
+Definition of done:
+
+- A student can log in, complete a residency flow, receive a decision, and see recent history.
+- The UI visually matches the intent of `docs/rough.chatgpt.ui.design.png`.
+- Empty, loading, and error states are present for the main flow.
+
+#### M4: Admin Dashboard
+
+Goal:
+
+- Implement the admin management dashboard shown in the rough design.
+
+Recommended GitHub Project items:
+
+- `Epic`: Admin management dashboard
+- `Task`: Add admin-only decision listing endpoint
+- `Task`: Add filtering by status, date range, and user
+- `Task`: Add decision statistics endpoint
+- `Task`: Build dashboard metric cards
+- `Task`: Build status distribution chart
+- `Task`: Build decision trends chart
+- `Task`: Build recent decisions table
+- `Task`: Build top factors section
+- `Test`: Add admin API and UI tests
+
+Definition of done:
+
+- Admin users can view total decisions, status distribution, recent submissions, trends, and top factors.
+- Student users cannot access admin-only APIs or pages.
+- Dashboard data comes from MongoDB, not hard-coded UI fixtures.
+
+#### M5: Product UI Polish
+
+Goal:
+
+- Turn the upgraded screens into a cohesive product experience rather than a collection of functional pages.
+
+Recommended GitHub Project items:
+
+- `Epic`: Product UI polish
+- `Design`: Define reusable UI tokens from the rough design
+- `Task`: Standardize layout, spacing, typography, status colors, buttons, badges, and cards
+- `Task`: Add responsive desktop and mobile behavior
+- `Task`: Add accessible labels and keyboard-friendly flows
+- `Task`: Refine loading, empty, unauthorized, and error states
+- `Test`: Add visual smoke checks with Playwright screenshots
+
+Definition of done:
+
+- Login, student chat, history, and admin dashboard feel like one coherent product.
+- Text does not overflow or overlap on desktop or mobile.
+- Core workflows remain fast and easy to demo.
+
+#### M6: CI/CD and Quality
+
+Goal:
+
+- Make the upgraded project reliable enough for pull requests, demos, and deployment.
+
+Recommended GitHub Project items:
+
+- `Epic`: Quality and delivery pipeline
+- `Task`: Update backend CI for MongoDB-backed tests
+- `Task`: Mock OpenAI consistently in automated tests
+- `Task`: Add backend tests for decision, auth, persistence, and admin APIs
+- `Task`: Add frontend unit tests for new auth, student, and admin screens
+- `Task`: Add Playwright flows for student and admin journeys
+- `Docs`: Update testing strategy and CI/CD documentation
+
+Definition of done:
+
+- Pull requests run backend tests, frontend tests, and Playwright E2E tests.
+- Tests do not require paid OpenAI calls.
+- Test failures clearly identify the failing layer.
+
+#### M7: Portfolio Packaging
+
+Goal:
+
+- Package the finished upgrade so it is easy to understand in interviews.
+
+Recommended GitHub Project items:
+
+- `Epic`: Portfolio launch package
+- `Docs`: Rewrite README as upgraded MERN product documentation
+- `Docs`: Add architecture overview
+- `Docs`: Add MongoDB data model page
+- `Docs`: Add API reference
+- `Docs`: Add demo script
+- `Docs`: Add architecture decision records for major tradeoffs
+- `Task`: Update screenshots after the UI upgrade
+- `Task`: Confirm production deployment environment variables
+
+Definition of done:
+
+- The project can be demoed in under five minutes.
+- The architecture can be explained in under two minutes.
+- README, docs, GitHub Project, and screenshots tell the same product story.
+
 ## 7. Overall Timeline
 
 ### Minimum viable upgrade
@@ -600,20 +813,34 @@ Includes:
 
 ## 8. Recommended Execution Strategy
 
-The recommended path is:
+The recommended path has two layers:
 
-1. Migrate Express to NestJS first.
-2. Add MongoDB second.
-3. Add history/admin APIs third.
-4. Add auth fourth.
-5. Create Figma UI/UX design and productized flows fifth.
-6. Upgrade frontend workflows from the Figma design sixth.
-7. Add test framework hardening, Allure reporting, and CI/CD quality gates seventh.
-8. Add Redis caching/rate limiting eighth.
-9. Add AWS production deployment ninth.
-10. Polish documentation and interview packaging last.
+1. The product delivery path used for day-to-day vibe coding.
+2. The architecture maturity path used for longer-term portfolio depth.
 
-This order keeps the project working after each phase and avoids mixing too many moving parts at once.
+For day-to-day implementation, use the `Vibe Coding Execution Roadmap` as the primary sequence:
+
+1. Lock the baseline.
+2. Migrate persistence from SQLite to MongoDB.
+3. Add auth and roles.
+4. Build the student chat experience from the rough design.
+5. Build the admin dashboard from the rough design.
+6. Polish the product UI.
+7. Harden tests, CI/CD, and quality reporting.
+8. Package the project for portfolio and interview use.
+
+This order creates visible product progress quickly while keeping each milestone small enough to implement, review, and test.
+
+For longer-term architecture maturity, the project can still follow the larger phase plan:
+
+1. Migrate Express to NestJS after the current MERN-style foundation is stable.
+2. Expand history/admin APIs.
+3. Add Allure reporting and deeper quality dashboards.
+4. Add Redis only for concrete needs such as AI explanation caching or rate limiting.
+5. Add AWS production-style deployment after the application architecture is stable.
+6. Polish documentation, GitHub Wiki pages, and interview packaging last.
+
+This approach avoids turning the first upgrade into a full rewrite. It also keeps the project demoable after each meaningful change.
 
 ## 9. Interview Positioning
 
@@ -655,8 +882,9 @@ Project structure:
 
 - Each phase is represented as an Epic.
 - Each Epic contains feature-level Tasks.
-- Work item types include `Task`, `Bug`, `Chore`, and `Docs`.
+- Work item types include `Task`, `Bug`, `Chore`, `Docs`, `Design`, and `Test`.
 - Larger features can be split into smaller implementation, test, documentation, and deployment tasks.
+- Milestones should map to the `M0` through `M7` delivery roadmap so the board can show both active work and product progress.
 
 Workflow states:
 
@@ -680,11 +908,14 @@ Recommended item mapping:
 - `Bug`: a defect found during implementation, testing, or demo preparation.
 - `Chore`: setup, dependency, configuration, cleanup, or infrastructure work.
 - `Docs`: README, architecture diagram, API documentation, demo script, or interview notes.
+- `Design`: Figma, wireframe, design-token, product-flow, or visual QA work.
+- `Test`: unit, integration, API, E2E, CI, or quality-reporting work.
 
 Recommended operating model:
 
 - Start every phase by creating or reviewing its Epic.
 - Move only one or two major Tasks into `In Progress` at a time.
+- Use the M0-M7 roadmap to decide what is active now and what stays in backlog.
 - Use `Review` for code review, design review, test evidence review, or self-review before completion.
 - Move work to `Done` after implementation and verification.
 - Move completed work to `Closed` when it no longer needs to appear on the active Kanban board.
